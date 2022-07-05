@@ -10,15 +10,26 @@ extern "C" {
 #endif
 
 /*
- * Class:     com_byteflow_app_MyNativeRender
- * Method:    native_Init
- * Signature: ()V
- */
-JNIEXPORT void JNICALL native_Init(JNIEnv *env, jobject instance)
-{
-    LOGCATE("hello world");
+  * Class:     com_hikvision_jni_MyCam
+  * Method:    startPreview
+  * Signature: (Landroid/view/SurfaceHolder;)V
+  */
+ JNIEXPORT void JNICALL startPreview(JNIEnv *env, jobject instance,jclass surfaceObj)
+ {
+     LOGCATE("hello world");
 
-}
+ }
+
+ /*
+  * Class:     com_hikvision_jni_MyCam
+  * Method:    stopPreview
+  * Signature: ()V
+  */
+ JNIEXPORT void JNICALL stopPreview(JNIEnv *env, jobject instance)
+ {
+     LOGCATE("hello world");
+
+ }
 
 
 #ifdef __cplusplus
@@ -26,7 +37,8 @@ JNIEXPORT void JNICALL native_Init(JNIEnv *env, jobject instance)
 #endif
 
 static JNINativeMethod g_RenderMethods[] = {
-		{"native_Init",                      "()V",       (void *)(native_Init)},
+		{"startPreview",                      "(Landroid/view/Surface;)V",       (void *)(startPreview)},
+		{"stopPreview",                       "()V",                             (void *)(stopPreview)},
 
 };
 

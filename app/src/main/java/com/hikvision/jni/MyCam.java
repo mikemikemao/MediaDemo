@@ -1,5 +1,7 @@
 package com.hikvision.jni;
 
+import android.view.Surface;
+
 /**
  * description ： camera operation
  * author : 海賊王　私失敗しないので
@@ -11,9 +13,17 @@ public class MyCam {
         System.loadLibrary("learn-dsp");
     }
     /**
-     * native
+     * description startPreview
+     * param surface
      * @return
      */
-    public static native void native_Init();
+    public static native void startPreview(Surface surface);
+
+    /**
+     * description stopPreview
+     * param
+     * @return
+     */
+    public static native void stopPreview();
 
 }
