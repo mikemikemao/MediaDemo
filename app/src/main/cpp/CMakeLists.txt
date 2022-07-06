@@ -12,6 +12,7 @@ include_directories(
         common
         ${CMAKE_SOURCE_DIR}/
         ${CMAKE_SOURCE_DIR}/util
+        ${CMAKE_SOURCE_DIR}/cam
        )
 
 link_directories(
@@ -20,6 +21,7 @@ link_directories(
 
 file(GLOB src-files
         ${CMAKE_SOURCE_DIR}/*.cpp
+        ${CMAKE_SOURCE_DIR}/cam/*.cpp
         ${CMAKE_SOURCE_DIR}/util/*.cpp
         )
 
@@ -43,6 +45,8 @@ set(native-libs
         GLESv3
         OpenSLES
         log
+        OpenSLES
+        camera2ndk
         m
         z
         )

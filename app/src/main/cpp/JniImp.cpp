@@ -3,11 +3,14 @@
 //
 #include "jni.h"
 #include "utils/LogUtil.h"
+#include "Cam2Wrapper.h"
 #define NATIVE_CAM_CLASS_NAME "com/hikvision/jni/MyCam"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+Cam2Wrapper cam2Wrapper;
 
 /*
   * Class:     com_hikvision_jni_MyCam
@@ -16,7 +19,14 @@ extern "C" {
   */
  JNIEXPORT void JNICALL startPreview(JNIEnv *env, jobject instance,jclass surfaceObj)
  {
-     LOGCATE("hello world");
+     LOGCATE("startPreview");
+     int ret = 0;
+	 ret = cam2Wrapper.openCamera(TEMPLATE_PREVIEW);
+	 if (ret!=0){
+		 LOGCATE("openCamera failed ret =%d\n",ret);
+		 return;
+	 }
+	 cam2Wrapper.startPreview(env,surfaceObj);
 
  }
 
@@ -27,8 +37,8 @@ extern "C" {
   */
  JNIEXPORT void JNICALL stopPreview(JNIEnv *env, jobject instance)
  {
-     LOGCATE("hello world");
-
+     LOGCATE("stopPreview");
+	 cam2Wrapper.closeCamera();
  }
 
 
