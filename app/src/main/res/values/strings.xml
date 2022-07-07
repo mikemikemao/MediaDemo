@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">MediaDemo</string>
+    <string name="title_name">MediaDemo</string>
     <string name="err_permission">Permission Error</string>
 </resources>

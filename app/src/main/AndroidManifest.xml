@@ -28,6 +28,7 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             />
+        <activity android:name=".CamActivity"/>
     </application>
 
 </manifest>

@@ -13,6 +13,7 @@ include_directories(
         ${CMAKE_SOURCE_DIR}/
         ${CMAKE_SOURCE_DIR}/util
         ${CMAKE_SOURCE_DIR}/cam
+        ${CMAKE_SOURCE_DIR}/audio
        )
 
 link_directories(
@@ -22,6 +23,7 @@ link_directories(
 file(GLOB src-files
         ${CMAKE_SOURCE_DIR}/*.cpp
         ${CMAKE_SOURCE_DIR}/cam/*.cpp
+        ${CMAKE_SOURCE_DIR}/audio/*.cpp
         ${CMAKE_SOURCE_DIR}/util/*.cpp
         )
 
