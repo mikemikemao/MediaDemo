@@ -55,7 +55,8 @@ public class CamActivity extends AppCompatActivity implements Camera2FrameCallba
             public void surfaceCreated(SurfaceHolder holder) {
 
                 Log.v(TAG, "surface created.");
-                mCamera2Wrapper.startCamera(holder.getSurface());
+                mCamera2Wrapper.startCamera();
+                //mCamera2Wrapper.startCamera(holder.getSurface());
             }
 
             @Override
@@ -79,35 +80,9 @@ public class CamActivity extends AppCompatActivity implements Camera2FrameCallba
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        Toast.makeText(this, "左滑或右滑选择滤镜", Toast.LENGTH_LONG).show();
-        if (hasPermissionsGranted(REQUEST_PERMISSIONS)) {
-            //mCamera2Wrapper.startCamera();
-        } else {
-            ActivityCompat.requestPermissions(this, REQUEST_PERMISSIONS, CAMERA_PERMISSION_REQUEST_CODE);
-        }
-
-    }
-
-    @Override
     protected void onPause() {
-        if (hasPermissionsGranted(REQUEST_PERMISSIONS)) {
-            mCamera2Wrapper.stopCamera();
-        }
+        mCamera2Wrapper.stopCamera();
         super.onPause();
-    }
-
-
-
-    protected boolean hasPermissionsGranted(String[] permissions) {
-        for (String permission : permissions) {
-            if (ActivityCompat.checkSelfPermission(this, permission)
-                    != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private void initViews() {

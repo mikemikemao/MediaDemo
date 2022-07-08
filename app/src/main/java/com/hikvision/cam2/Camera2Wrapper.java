@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.AndroidRuntimeException;
 import android.util.Log;
+import android.util.Range;
 import android.util.Size;
 import android.view.Surface;
 
@@ -49,6 +50,7 @@ public class Camera2Wrapper {
     private Size mDefaultCaptureSize = new Size(1280, 720);
     private Size mPreviewSize, mPictureSize;
     private Integer mSensorOrientation;
+    Range<Integer>[] fpsRanges;
 
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
@@ -122,6 +124,10 @@ public class Camera2Wrapper {
             characteristics = mCameraManager.getCameraCharacteristics(cameraId);
         } catch (CameraAccessException e) {
             e.printStackTrace();
+        }
+        fpsRanges = characteristics.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES);
+        for (Range<Integer> fps : fpsRanges){
+            Log.d(TAG, fps.toString());
         }
 
         StreamConfigurationMap streamConfigs = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
