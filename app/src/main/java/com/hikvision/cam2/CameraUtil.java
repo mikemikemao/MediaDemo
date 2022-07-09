@@ -3,11 +3,13 @@ package com.hikvision.cam2;
 import android.graphics.ImageFormat;
 import android.graphics.Point;
 import android.media.Image;
+import android.util.Log;
 import android.util.Size;
 
 import java.nio.ByteBuffer;
 
 public class CameraUtil {
+    private static final String TAG = "CameraUtil";
     public static Size getFitInScreenSize(int previewWidth, int previewHeight, int screenWidth,
                                           int screenHeight) {
         Point res = new Point(0, 0);
@@ -49,9 +51,11 @@ public class CameraUtil {
         for (int plane = 0; plane < planes.length; ++plane) {
             final ByteBuffer buffer = planes[plane].getBuffer();
             final int rowStride = planes[plane].getRowStride();
+            //Log.d(TAG, "rowStride[ "+plane +"]=" +rowStride + "imagewidth="+imageWidth+"    "+imageHeight);
             // Experimentally, U and V planes have |pixelStride| = 2, which
             // essentially means they are packed.
             final int pixelStride = planes[plane].getPixelStride();
+            //Log.d(TAG, "pixelStride[ "+plane +"]=" +pixelStride);
             final int planeWidth = (plane == 0) ? imageWidth : imageWidth / 2;
             final int planeHeight = (plane == 0) ? imageHeight : imageHeight / 2;
             if (pixelStride == 1 && rowStride == planeWidth) {

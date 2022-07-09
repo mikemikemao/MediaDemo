@@ -20,6 +20,7 @@ import androidx.core.app.ActivityCompat;
 import com.hikvision.cam2.Camera2FrameCallback;
 import com.hikvision.cam2.Camera2Wrapper;
 import com.hikvision.jni.MyCam;
+import com.hikvision.util.FileUtils;
 
 /**
  * description ： TODO:类的作用
@@ -94,6 +95,7 @@ public class CamActivity extends AppCompatActivity implements Camera2FrameCallba
     @Override
     public void onPreviewFrame(byte[] data, int width, int height) {
         Log.d(TAG, "onPreviewFrame() called with: data = [" + data + "], width = [" + width + "], height = [" + height + "]");
+        FileUtils.saveData("/sdcard/video.yuv",data);
     }
 
     @Override
