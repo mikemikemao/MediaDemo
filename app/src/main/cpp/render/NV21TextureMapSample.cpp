@@ -1,8 +1,8 @@
 //
 // Created by ByteFlow on 2019/7/10.
 //
-
-#include <GLUtils.h>
+#include <utils/ImageDef.h>
+#include <utils/GLUtils.h>
 #include "NV21TextureMapSample.h"
 
 void NV21TextureMapSample::LoadImage(NativeImage *pImage)

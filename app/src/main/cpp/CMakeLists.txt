@@ -11,11 +11,11 @@ include_directories(
         glm
         common
         ${CMAKE_SOURCE_DIR}/
-        ${CMAKE_SOURCE_DIR}/util
+        ${CMAKE_SOURCE_DIR}/utils
         ${CMAKE_SOURCE_DIR}/cam
         ${CMAKE_SOURCE_DIR}/audio
         ${CMAKE_SOURCE_DIR}/codec
-        #${CMAKE_SOURCE_DIR}/render
+        ${CMAKE_SOURCE_DIR}/render
        )
 
 link_directories(
@@ -26,9 +26,9 @@ file(GLOB src-files
         ${CMAKE_SOURCE_DIR}/*.cpp
         ${CMAKE_SOURCE_DIR}/cam/*.cpp
         ${CMAKE_SOURCE_DIR}/audio/*.cpp
-        ${CMAKE_SOURCE_DIR}/util/*.cpp
+        ${CMAKE_SOURCE_DIR}/utils/*.cpp
         ${CMAKE_SOURCE_DIR}/codec/*.cpp
-        #${CMAKE_SOURCE_DIR}/render/*.cpp
+        ${CMAKE_SOURCE_DIR}/render/*.cpp
         )
 
 add_library( # Sets the name of the library.

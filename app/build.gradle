@@ -5,7 +5,7 @@ plugins {
 android {
     compileSdk build_versions.compile_sdk
     defaultConfig {
-        applicationId "com.hikvision.mediadsp"
+        applicationId "com.hikvision.mediademo"
         minSdk build_versions.min_sdk
         targetSdk build_versions.target_sdk
         versionCode build_versions.app_version_code

@@ -6,13 +6,8 @@
 #define FFMPEGDEMO_MYGLRENDERCONTEXT_H
 #include <stdint.h>
 #include <GLES3/gl3.h>
-#include "LogUtil.h"
-#include "GLSampleBase.h"
-#include "TriangleSample.h"
-#include "TextureMapSample.h"
+#include "utils/LogUtil.h"
 #include "NV21TextureMapSample.h"
-#include "VaoSample.h"
-#include "FBOSample.h"
 
 class MyGLRenderContext {
 public:

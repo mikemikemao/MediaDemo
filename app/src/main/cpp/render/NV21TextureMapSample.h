@@ -7,7 +7,7 @@
 
 
 #include "GLSampleBase.h"
-#include "../util/ImageDef.h"
+#include "utils/ImageDef.h"
 
 class NV21TextureMapSample: public GLSampleBase
 {

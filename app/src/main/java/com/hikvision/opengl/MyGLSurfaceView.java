@@ -1,4 +1,4 @@
-package com.hikvision.ffmpegdemo.opengl;
+package com.hikvision.opengl;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
@@ -14,10 +14,10 @@ import android.util.Log;
 public class MyGLSurfaceView extends GLSurfaceView {
     private static final String TAG = "MyGLSurfaceView";
     private MyGLRender mGLRender;
-    public MyGLSurfaceView(Context context,MyGLRender glRender) {
+    public MyGLSurfaceView(Context context, MyGLRender glRender) {
         this(context, glRender, null);
     }
-    public MyGLSurfaceView(Context context,MyGLRender glRender,AttributeSet attrs) {
+    public MyGLSurfaceView(Context context, MyGLRender glRender, AttributeSet attrs) {
         super(context, attrs);
         Log.d(TAG, "MyGLSurfaceView: 2");
         this.setEGLContextClientVersion(2);

@@ -2,12 +2,13 @@
 // Created by pirate on 2022/3/12.
 //
 
+#include <utils/ImageDef.h>
 #include "MyGLRenderContext.h"
 MyGLRenderContext* MyGLRenderContext::m_pContext = nullptr;
 
 MyGLRenderContext::MyGLRenderContext()
 {
-    m_pCurSample = new TriangleSample();
+    m_pCurSample = new NV21TextureMapSample();
     m_pBeforeSample = nullptr;
 }
 
@@ -88,20 +89,8 @@ void MyGLRenderContext::SetParamsInt(int paramType, int value0, int value1) {
 
         LOGCATE("MyGLRenderContext::SetParamsInt 0 m_pBeforeSample = %p", m_pBeforeSample);
         switch (value0) {
-            case SAMPLE_TYPE_KEY_TRIANGLE:
-                m_pCurSample = new TriangleSample();
-                break;
-            case SAMPLE_TYPE_KEY_TEXTURE_MAP:
-                m_pCurSample = new TextureMapSample();
-                break;
             case SAMPLE_TYPE_KEY_YUV_TEXTURE_MAP :
                 m_pCurSample = new NV21TextureMapSample();
-                break;
-            case SAMPLE_TYPE_KEY_VAO :
-                m_pCurSample = new VaoSample();
-                break;
-            case SAMPLE_TYPE_KEY_FBO :
-                m_pCurSample = new FBOSample();
                 break;
             default:
                 m_pCurSample = nullptr;

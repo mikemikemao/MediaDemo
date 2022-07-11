@@ -4,6 +4,7 @@
 #include "jni.h"
 #include "utils/LogUtil.h"
 #include "Cam2Wrapper.h"
+#include "MyGLRenderContext.h"
 #define NATIVE_CAM_CLASS_NAME "com/hikvision/jni/MyCam"
 
 #ifdef __cplusplus
@@ -46,22 +47,53 @@ Cam2Wrapper cam2Wrapper;
  * Method:    previewFrame
  * Signature: ()V
  */
-JNIEXPORT void JNICALL previewFrame(JNIEnv *env,
+JNIEXPORT void JNICALL setImageData(JNIEnv *env,
 									jobject instance,
 									jint format,
 									jbyteArray data,
 									jint width,
 									jint height)
 {
-//	int len = env->GetArrayLength (data);
-//	unsigned char* buf = new unsigned char[len];
-//	env->GetByteArrayRegion(data, 0, len, reinterpret_cast<jbyte*>(buf));
-//	MediaRecorderContext *pContext = MediaRecorderContext::GetContext(env, thiz);
-//	if(pContext) pContext->OnPreviewFrame(format, buf, width, height);
-//	delete[] buf;
+	LOGCATE("setImageData");
+	int len = env->GetArrayLength (data);
+	unsigned char* buf = new unsigned char[len];
+	env->GetByteArrayRegion(data, 0, len, reinterpret_cast<jbyte*>(buf));
+	MyGLRenderContext::GetInstance()->SetImageData(format, width, height, buf);
+    MyGLRenderContext::GetInstance()->OnDrawFrame();
+	delete[] buf;
+	env->DeleteLocalRef(data);
 }
 
 
+/*
+ * Class:     com_hikvision_jni_MyCam
+ * Method:    previewFrame
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL surfaceCreated(JNIEnv *env, jclass instance)
+{
+	MyGLRenderContext::GetInstance()->OnSurfaceCreated();
+}
+
+/*
+ * Class:     com_hikvision_jni_MyCam
+ * Method:    previewFrame
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL surfaceChanged(JNIEnv *env, jclass instance,jint width,jint height)
+{
+	MyGLRenderContext::GetInstance()->OnSurfaceChanged(width, height);
+}
+
+/*
+ * Class:     com_hikvision_jni_MyCam
+ * Method:    previewFrame
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL drawFrame(JNIEnv *env, jclass instance)
+{
+	MyGLRenderContext::GetInstance()->OnDrawFrame();
+}
 
 
 #ifdef __cplusplus
@@ -69,9 +101,12 @@ JNIEXPORT void JNICALL previewFrame(JNIEnv *env,
 #endif
 
 static JNINativeMethod g_RenderMethods[] = {
-		{"startPreview",                      "(Landroid/view/Surface;)V",       (void *)(startPreview)},
-		{"stopPreview",                       "()V",                             (void *)(stopPreview)},
-		{"previewFrame",                       "(I[BII)V",                       (void *)(previewFrame)},
+		{"native_startPreview",                      "(Landroid/view/Surface;)V",       (void *)(startPreview)},
+		{"native_stopPreview",                       "()V",                             (void *)(stopPreview)},
+		{"native_setImageData",                       "(I[BII)V",                       (void *)(setImageData)},
+		{"native_surfaceCreated",                       "()V",                        (void *)(surfaceCreated)},
+		{"native_surfaceChanged",                       "(II)V",                        (void *)(surfaceChanged)},
+		{"native_drawFrame",                             "()V",                        (void *)(drawFrame)},
 
 };
 
