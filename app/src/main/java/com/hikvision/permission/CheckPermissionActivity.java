@@ -16,7 +16,7 @@ import com.hikvision.mediademo.R;
 
 
 public class CheckPermissionActivity extends Activity {
-    private final int REQUEST_CODE_ASK_PERMISSIONS = 124;
+    private final int REQUEST_CODE_ASK_PERMISSIONS = 1024;
     private static final String[] REQUEST_PERMISSIONS = new String[]{
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,

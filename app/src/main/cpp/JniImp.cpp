@@ -41,6 +41,28 @@ Cam2Wrapper cam2Wrapper;
 	 cam2Wrapper.closeCamera();
  }
 
+/*
+ * Class:     com_hikvision_jni_MyCam
+ * Method:    previewFrame
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL previewFrame(JNIEnv *env,
+									jobject instance,
+									jint format,
+									jbyteArray data,
+									jint width,
+									jint height)
+{
+//	int len = env->GetArrayLength (data);
+//	unsigned char* buf = new unsigned char[len];
+//	env->GetByteArrayRegion(data, 0, len, reinterpret_cast<jbyte*>(buf));
+//	MediaRecorderContext *pContext = MediaRecorderContext::GetContext(env, thiz);
+//	if(pContext) pContext->OnPreviewFrame(format, buf, width, height);
+//	delete[] buf;
+}
+
+
+
 
 #ifdef __cplusplus
 }
@@ -49,6 +71,7 @@ Cam2Wrapper cam2Wrapper;
 static JNINativeMethod g_RenderMethods[] = {
 		{"startPreview",                      "(Landroid/view/Surface;)V",       (void *)(startPreview)},
 		{"stopPreview",                       "()V",                             (void *)(stopPreview)},
+		{"previewFrame",                       "(I[BII)V",                       (void *)(previewFrame)},
 
 };
 

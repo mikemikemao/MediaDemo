@@ -19,8 +19,11 @@ import androidx.core.app.ActivityCompat;
 
 import com.hikvision.cam2.Camera2FrameCallback;
 import com.hikvision.cam2.Camera2Wrapper;
+import com.hikvision.jni.MediaRendor;
 import com.hikvision.jni.MyCam;
 import com.hikvision.util.FileUtils;
+
+import static com.hikvision.jni.MediaRendor.IMAGE_FORMAT_I420;
 
 /**
  * description ： TODO:类的作用
@@ -34,6 +37,7 @@ public class CamActivity extends AppCompatActivity implements Camera2FrameCallba
     SurfaceView surfaceView;
     SurfaceHolder surfaceHolder;
 
+    MediaRendor mediaRendor;
     private Camera2Wrapper mCamera2Wrapper;
     private static final String[] REQUEST_PERMISSIONS = {
             Manifest.permission.CAMERA,
@@ -47,31 +51,28 @@ public class CamActivity extends AppCompatActivity implements Camera2FrameCallba
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_cam);
-
-        surfaceView = (SurfaceView) findViewById(R.id.surfaceview);
-        surfaceHolder = surfaceView.getHolder();
-
-        surfaceHolder.addCallback(new SurfaceHolder.Callback() {
-            @Override
-            public void surfaceCreated(SurfaceHolder holder) {
-
-                Log.v(TAG, "surface created.");
-                mCamera2Wrapper.startCamera();
-                //mCamera2Wrapper.startCamera(holder.getSurface());
-            }
-
-            @Override
-            public void surfaceDestroyed(SurfaceHolder holder) {
-                mCamera2Wrapper.stopCamera();
-            }
-
-            @Override
-            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-                Log.v(TAG, "format=" + format + " w/h : (" + width + ", " + height + ")");
-            }
-        });
-
+        mediaRendor = new MediaRendor();
         initViews();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (hasPermissionsGranted(REQUEST_PERMISSIONS)) {
+            mCamera2Wrapper.startCamera();
+        } else {
+            ActivityCompat.requestPermissions(this, REQUEST_PERMISSIONS, CAMERA_PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    protected boolean hasPermissionsGranted(String[] permissions) {
+        for (String permission : permissions) {
+            if (ActivityCompat.checkSelfPermission(this, permission)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
     }
 
 
@@ -88,14 +89,15 @@ public class CamActivity extends AppCompatActivity implements Camera2FrameCallba
 
     private void initViews() {
         mCamera2Wrapper = new Camera2Wrapper(CamActivity.this);
-        mCamera2Wrapper.setDefaultPreviewSize(new Size(640, 480));
+        mCamera2Wrapper.setDefaultPreviewSize(new Size(1600, 1200));
     }
 
 
     @Override
     public void onPreviewFrame(byte[] data, int width, int height) {
-        Log.d(TAG, "onPreviewFrame() called with: data = [" + data + "], width = [" + width + "], height = [" + height + "]");
-        FileUtils.saveData("/sdcard/video.yuv",data);
+        Log.d(TAG, "onPreviewFrame() called with: data = [" + data + "], width = [" + width + "], height = [" + height + "]"+ "size = "+ data.length);
+        //FileUtils.saveData("/sdcard/video.yuv",data,true);
+        //mediaRendor.onPreviewFrame(IMAGE_FORMAT_I420, data, width, height);
     }
 
     @Override

@@ -16,6 +16,7 @@ import android.media.Image;
 import android.media.ImageReader;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.SystemClock;
 import android.util.AndroidRuntimeException;
 import android.util.Log;
 import android.util.Range;
@@ -51,6 +52,7 @@ public class Camera2Wrapper {
     private Size mPreviewSize, mPictureSize;
     private Integer mSensorOrientation;
     Range<Integer>[] fpsRanges;
+    Range<Integer>   maxFps;
 
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
@@ -62,14 +64,25 @@ public class Camera2Wrapper {
     private CameraDevice mCameraDevice;
     private CameraCaptureSession mCameraCaptureSession;
     private CaptureRequest mPreviewRequest;
+    private CaptureRequest.Builder mPreviewRequestBuilder;
 
     private ImageReader.OnImageAvailableListener mOnPreviewImageAvailableListener = new ImageReader.OnImageAvailableListener() {
+        private int  frames      = 0;
+        private long initialTime = SystemClock.elapsedRealtimeNanos();
         @Override
         public void onImageAvailable(ImageReader reader) {
             Image image = reader.acquireLatestImage();
             if (image != null) {
                 if (mCamera2FrameCallback != null) {
                     mCamera2FrameCallback.onPreviewFrame(CameraUtil.YUV_420_888_data(image), image.getWidth(), image.getHeight());
+                }
+                frames++;
+                if ((frames % 30) == 0) {
+                    long currentTime = SystemClock.elapsedRealtimeNanos();
+                    long fps = Math.round(frames * 1e9 / (currentTime - initialTime));
+                    Log.d(TAG, "frame# : " + frames + ", approximately " + fps + " fps");
+                    frames = 0;
+                    initialTime = SystemClock.elapsedRealtimeNanos();
                 }
                 image.close();
             }
@@ -125,9 +138,17 @@ public class Camera2Wrapper {
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
+        //自动曝光下控制帧率
         fpsRanges = characteristics.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES);
-        for (Range<Integer> fps : fpsRanges){
-            Log.d(TAG, fps.toString());
+        // Log.d("FPS", "SYNC_MAX_LATENCY_PER_FRAME_CONTROL: " + Arrays.toString(fpsRanges));
+        if(fpsRanges != null && fpsRanges.length > 0) {
+            maxFps = fpsRanges[0];
+            for (Range<Integer> aFpsRange : fpsRanges) {
+                if (maxFps.getLower() * maxFps.getUpper() < aFpsRange.getLower() * aFpsRange.getUpper()) {
+                    maxFps = aFpsRange;
+                }
+            }
+            Log.d(TAG, "maxFps: " + maxFps.toString());
         }
 
         StreamConfigurationMap streamConfigs = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
@@ -391,6 +412,7 @@ public class Camera2Wrapper {
         if (null == mCameraDevice || mPreviewSurface == null) return null;
         try {
             CaptureRequest.Builder builder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+            builder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, maxFps);
             builder.addTarget(mPreviewSurface);
             return builder.build();
         } catch (CameraAccessException e) {

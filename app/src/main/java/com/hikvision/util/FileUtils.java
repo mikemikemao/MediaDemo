@@ -61,13 +61,13 @@ public class FileUtils {
         }
     }
 
-    public static void saveData(String sdCardPath, byte[] data) {
+    public static void saveData(String sdCardPath, byte[] data,boolean isApppend) {
         try {
             File file = new File(sdCardPath);
             if (!file.exists()){
                 file.createNewFile();
             }
-            FileOutputStream fos = new FileOutputStream(file);
+            FileOutputStream fos = new FileOutputStream(file,isApppend);
             fos.write(data, 0, data.length);
             fos.flush();
             fos.close();
