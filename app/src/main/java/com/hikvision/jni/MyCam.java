@@ -36,6 +36,13 @@ public class MyCam {
     public static native void native_stopPreview();
 
     /**
+     * description native_eglInit
+     * param
+     * @return
+     */
+    public static native void native_eglInit(Surface surface);
+
+    /**
      * description stopPreview
      * param
      * @return

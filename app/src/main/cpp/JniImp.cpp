@@ -5,6 +5,7 @@
 #include "utils/LogUtil.h"
 #include "Cam2Wrapper.h"
 #include "MyGLRenderContext.h"
+#include "EglRender.h"
 #define NATIVE_CAM_CLASS_NAME "com/hikvision/jni/MyCam"
 
 #ifdef __cplusplus
@@ -41,6 +42,20 @@ Cam2Wrapper cam2Wrapper;
      LOGCATE("stopPreview");
 	 cam2Wrapper.closeCamera();
  }
+
+/*
+ * Class:     com_hikvision_jni_MyCam
+ * Method:    eglInit
+ * Signature: ()J
+ */
+JNIEXPORT jlong JNICALL eglInit(JNIEnv *env, jobject instance,jclass surfaceObj)
+{
+	LOGCATE("eglInit");
+	EglRender* eglRender = new EglRender();
+	eglRender->init(env,surfaceObj);
+	return reinterpret_cast<jlong>(eglRender);
+
+}
 
 /*
  * Class:     com_hikvision_jni_MyCam
@@ -103,10 +118,11 @@ JNIEXPORT void JNICALL drawFrame(JNIEnv *env, jclass instance)
 static JNINativeMethod g_RenderMethods[] = {
 		{"native_startPreview",                      "(Landroid/view/Surface;)V",       (void *)(startPreview)},
 		{"native_stopPreview",                       "()V",                             (void *)(stopPreview)},
+		{"native_eglInit",                           "(Landroid/view/Surface;)J",       (void *)(eglInit)},
 		{"native_setImageData",                       "(I[BII)V",                       (void *)(setImageData)},
-		{"native_surfaceCreated",                       "()V",                        (void *)(surfaceCreated)},
+		{"native_surfaceCreated",                       "()V",                          (void *)(surfaceCreated)},
 		{"native_surfaceChanged",                       "(II)V",                        (void *)(surfaceChanged)},
-		{"native_drawFrame",                             "()V",                        (void *)(drawFrame)},
+		{"native_drawFrame",                             "()V",                         (void *)(drawFrame)},
 
 };
 
