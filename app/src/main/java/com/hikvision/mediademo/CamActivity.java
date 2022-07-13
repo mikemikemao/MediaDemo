@@ -14,7 +14,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -33,13 +32,15 @@ import static com.hikvision.jni.MyCam.IMAGE_FORMAT_I420;
  * param
  * date : 2022/7/7 15:06
  */
-public class CamActivity extends AppCompatActivity implements Camera2FrameCallback{
+public class CamActivity extends AppCompatActivity implements Camera2FrameCallback,ViewTreeObserver.OnGlobalLayoutListener{
     final static String TAG = "MainActivity";
 
     SurfaceView surfaceView;
     SurfaceHolder surfaceHolder;
 
-    MyCam myCam;
+    private MyGLSurfaceView mGLSurfaceView;
+    private MyGLRender mGLRender;
+    private ViewGroup mRootView;
 
     private Camera2Wrapper mCamera2Wrapper;
     private static final String[] REQUEST_PERMISSIONS = {
@@ -51,30 +52,29 @@ public class CamActivity extends AppCompatActivity implements Camera2FrameCallba
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_cam);
 
-        myCam = new MyCam();
+        mRootView = (ViewGroup) findViewById(R.id.rootView);
+        mRootView.getViewTreeObserver().addOnGlobalLayoutListener(this);
 
-        surfaceView = (SurfaceView) findViewById(R.id.surfaceview);
-        surfaceHolder = surfaceView.getHolder();
-        surfaceHolder.addCallback(new SurfaceHolder.Callback() {
-            @Override
-            public void surfaceCreated(@NonNull SurfaceHolder holder) {
-                Log.v(TAG, "surface created.");
-                myCam.native_eglInit(holder.getSurface());
-            }
-
-            @Override
-            public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
-                Log.v(TAG, "format=" + format + " w/h : (" + width + ", " + height + ")");
-            }
-
-            @Override
-            public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
-
-            }
-        });
+        mGLRender = new MyGLRender();
+        mGLSurfaceView = new MyGLSurfaceView(CamActivity.this,mGLRender);
         initViews();
+    }
+
+    @Override
+    public void onGlobalLayout() {
+        Log.d(TAG, "onGlobalLayout: ");
+        mRootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        lp.addRule(RelativeLayout.CENTER_IN_PARENT);
+        mGLSurfaceView = new MyGLSurfaceView(this, mGLRender);
+        mRootView.addView(mGLSurfaceView, lp);
+        mGLSurfaceView.setRenderMode(RENDERMODE_WHEN_DIRTY);
+
     }
 
     @Override
@@ -119,7 +119,8 @@ public class CamActivity extends AppCompatActivity implements Camera2FrameCallba
     public void onPreviewFrame(byte[] data, int width, int height) {
         Log.d(TAG, "onPreviewFrame() called with: data = [" + data + "], width = [" + width + "], height = [" + height + "]"+ "size = "+ data.length);
         //FileUtils.saveData("/sdcard/video.yuv",data,true);
-
+        mGLRender.setImageData(IMAGE_FORMAT_I420, width, height,data);
+        mGLSurfaceView.requestRender();
     }
 
     @Override

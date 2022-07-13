@@ -40,7 +40,7 @@ public class MyCam {
      * param
      * @return
      */
-    public static native void native_eglInit(Surface surface);
+    public static native long native_eglInit(Surface surface);
 
     /**
      * description stopPreview
