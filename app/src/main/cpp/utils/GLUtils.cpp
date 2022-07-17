@@ -8,20 +8,16 @@ GLuint GLUtils::LoadShader(GLenum shaderType, const char *pSource)
 {
     GLuint shader = 0;
 	FUN_BEGIN_TIME("GLUtils::LoadShader")
-	    //创建着色器
-        shader = glCreateShader(shaderType); //1.我们首先要做的是创建一个着色器对象，注意还是用ID来引用的。所以我们储存这个顶点着色器为unsigned int，然后用glCreateShader创建这个着色器：
+        shader = glCreateShader(shaderType);
         if (shader)
         {
-            //2.把着色器源码附加到着色器上 然后编译
             glShaderSource(shader, 1, &pSource, NULL);
             glCompileShader(shader);
             GLint compiled = 0;
-            //检测是否编译成功
             glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
             if (!compiled)
             {
                 GLint infoLen = 0;
-                //查看错误信息
                 glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen);
                 if (infoLen)
                 {
@@ -32,7 +28,6 @@ GLuint GLUtils::LoadShader(GLenum shaderType, const char *pSource)
                         LOGCATE("GLUtils::LoadShader Could not compile shader %d:\n%s\n", shaderType, buf);
                         free(buf);
                     }
-                    //删除着色器 回收资源
                     glDeleteShader(shader);
                     shader = 0;
                 }
@@ -46,28 +41,22 @@ GLuint GLUtils::CreateProgram(const char *pVertexShaderSource, const char *pFrag
 {
     GLuint program = 0;
     FUN_BEGIN_TIME("GLUtils::CreateProgram")
-        //顶点着色器 读取并编译着色器 得到一个对象
         vertexShaderHandle = LoadShader(GL_VERTEX_SHADER, pVertexShaderSource);
         if (!vertexShaderHandle) return program;
-        //fragment shader
         fragShaderHandle = LoadShader(GL_FRAGMENT_SHADER, pFragShaderSource);
         if (!fragShaderHandle) return program;
-        //创建着色器程序
+
         program = glCreateProgram();
         if (program)
         {
-            //附加顶点着色器
             glAttachShader(program, vertexShaderHandle);
             CheckGLError("glAttachShader");
-            //附加片段着色器
             glAttachShader(program, fragShaderHandle);
             CheckGLError("glAttachShader");
-            //链接
             glLinkProgram(program);
             GLint linkStatus = GL_FALSE;
-            //检测出错
             glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
-            //连接完后 需把对象删掉 不需要了
+
             glDetachShader(program, vertexShaderHandle);
             glDeleteShader(vertexShaderHandle);
             vertexShaderHandle = 0;

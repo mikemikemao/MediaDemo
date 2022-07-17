@@ -2,29 +2,21 @@ package com.hikvision.mediademo;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Size;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.RelativeLayout;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
 import com.hikvision.cam2.Camera2FrameCallback;
 import com.hikvision.cam2.Camera2Wrapper;
-import com.hikvision.jni.MyCam;
-import com.hikvision.opengl.MyGLRender;
-import com.hikvision.opengl.MyGLSurfaceView;
+import com.hikvision.opengl.MyMediaRender;
 
-import static android.opengl.GLSurfaceView.RENDERMODE_WHEN_DIRTY;
 import static com.hikvision.jni.MyCam.IMAGE_FORMAT_I420;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 /**
  * description ： TODO:类的作用
@@ -32,15 +24,12 @@ import static com.hikvision.jni.MyCam.IMAGE_FORMAT_I420;
  * param
  * date : 2022/7/7 15:06
  */
-public class CamActivity extends AppCompatActivity implements Camera2FrameCallback,ViewTreeObserver.OnGlobalLayoutListener{
+public class CamActivity extends AppCompatActivity implements Camera2FrameCallback{
     final static String TAG = "MainActivity";
 
-    SurfaceView surfaceView;
-    SurfaceHolder surfaceHolder;
+    protected GLSurfaceView mGLSurfaceView;
+    private MyMediaRender myMediaRender;
 
-    private MyGLSurfaceView mGLSurfaceView;
-    private MyGLRender mGLRender;
-    private ViewGroup mRootView;
 
     private Camera2Wrapper mCamera2Wrapper;
     private static final String[] REQUEST_PERMISSIONS = {
@@ -56,25 +45,9 @@ public class CamActivity extends AppCompatActivity implements Camera2FrameCallba
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_cam);
 
-        mRootView = (ViewGroup) findViewById(R.id.rootView);
-        mRootView.getViewTreeObserver().addOnGlobalLayoutListener(this);
-
-        mGLRender = new MyGLRender();
-        mGLSurfaceView = new MyGLSurfaceView(CamActivity.this,mGLRender);
+        mGLSurfaceView = new GLSurfaceView(this);
+        myMediaRender = new MyMediaRender();
         initViews();
-    }
-
-    @Override
-    public void onGlobalLayout() {
-        Log.d(TAG, "onGlobalLayout: ");
-        mRootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        lp.addRule(RelativeLayout.CENTER_IN_PARENT);
-        mGLSurfaceView = new MyGLSurfaceView(this, mGLRender);
-        mRootView.addView(mGLSurfaceView, lp);
-        mGLSurfaceView.setRenderMode(RENDERMODE_WHEN_DIRTY);
-
     }
 
     @Override
@@ -86,30 +59,22 @@ public class CamActivity extends AppCompatActivity implements Camera2FrameCallba
             ActivityCompat.requestPermissions(this, REQUEST_PERMISSIONS, CAMERA_PERMISSION_REQUEST_CODE);
         }
     }
-
-    protected boolean hasPermissionsGranted(String[] permissions) {
-        for (String permission : permissions) {
-            if (ActivityCompat.checkSelfPermission(this, permission)
-                    != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
+    @Override
+    protected void onPause() {
+        if (hasPermissionsGranted(REQUEST_PERMISSIONS)) {
+            mCamera2Wrapper.stopCamera();
         }
-        return true;
+        super.onPause();
     }
-
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-    }
-
-    @Override
-    protected void onPause() {
-        mCamera2Wrapper.stopCamera();
-        super.onPause();
+        myMediaRender.unInit();
     }
 
     private void initViews() {
+        myMediaRender.init(mGLSurfaceView);
         mCamera2Wrapper = new Camera2Wrapper(CamActivity.this);
         mCamera2Wrapper.setDefaultPreviewSize(new Size(1600, 1200));
     }
@@ -119,12 +84,23 @@ public class CamActivity extends AppCompatActivity implements Camera2FrameCallba
     public void onPreviewFrame(byte[] data, int width, int height) {
         Log.d(TAG, "onPreviewFrame() called with: data = [" + data + "], width = [" + width + "], height = [" + height + "]"+ "size = "+ data.length);
         //FileUtils.saveData("/sdcard/video.yuv",data,true);
-        mGLRender.setImageData(IMAGE_FORMAT_I420, width, height,data);
-        mGLSurfaceView.requestRender();
+        myMediaRender.onPreviewFrame(IMAGE_FORMAT_I420, data, width, height);
+        myMediaRender.requestRender();
     }
 
     @Override
     public void onCaptureFrame(byte[] data, int width, int height) {
         Log.d(TAG, "onCaptureFrame() called with: data = [" + data + "], width = [" + width + "], height = [" + height + "]");
+    }
+
+
+    protected boolean hasPermissionsGranted(String[] permissions) {
+        for (String permission : permissions) {
+            if (ActivityCompat.checkSelfPermission(this, permission)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
     }
 }

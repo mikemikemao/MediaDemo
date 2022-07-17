@@ -21,6 +21,8 @@ public class MyCam {
     public static final int IMAGE_FORMAT_I420 = 0x04;
     private static String TAG = "MyCam";
 
+    private long mNativeContextHandle;
+
     /**
      * description startPreview
      * param surface
@@ -36,37 +38,60 @@ public class MyCam {
     public static native void native_stopPreview();
 
     /**
-     * description native_eglInit
+     * description native_CreateContext
      * param
      * @return
      */
-    public static native long native_eglInit(Surface surface);
+    public static native void native_CreateContext();
+
+    /**
+     * description native_DestroyContext
+     * param
+     * @return
+     */
+    public static native void native_DestroyContext();
+
+
+    /**
+     * description native_Init
+     * param
+     * @return
+     */
+    public static native int native_Init();
+
+    /**
+     * description native_Init
+     * param
+     * @return
+     */
+    public static native int native_UnInit();
+
+
+    /**
+     * description native_OnPreviewFrame
+     * param
+     * @return
+     */
+    protected native void native_OnPreviewFrame(int format, byte[] data, int width, int height);
 
     /**
      * description stopPreview
      * param
      * @return
      */
-    public native void native_setImageData(int format, byte[] data, int width, int height);
+    public native void native_OnSurfaceCreated();
 
     /**
      * description stopPreview
      * param
      * @return
      */
-    public native void native_surfaceCreated();
+    public native void native_OnSurfaceChanged(int width, int height);
 
     /**
      * description stopPreview
      * param
      * @return
      */
-    public native void native_surfaceChanged(int width, int height);
-
-    /**
-     * description stopPreview
-     * param
-     * @return
-     */
-    public native void native_drawFrame();
+    public native void native_OnDrawFrame();
 }
