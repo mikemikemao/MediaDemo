@@ -28,28 +28,28 @@ public class MyCam {
      * param surface
      * @return
      */
-    public static native void native_startPreview(Surface surface);
+    public native void native_startPreview(Surface surface);
 
     /**
      * description stopPreview
      * param
      * @return
      */
-    public static native void native_stopPreview();
+    public native void native_stopPreview();
 
     /**
      * description native_CreateContext
      * param
      * @return
      */
-    public static native void native_CreateContext();
+    public native void native_CreateContext();
 
     /**
      * description native_DestroyContext
      * param
      * @return
      */
-    public static native void native_DestroyContext();
+    public native void native_DestroyContext();
 
 
     /**
@@ -57,14 +57,14 @@ public class MyCam {
      * param
      * @return
      */
-    public static native int native_Init();
+    public native int native_Init();
 
     /**
      * description native_Init
      * param
      * @return
      */
-    public static native int native_UnInit();
+    public native int native_UnInit();
 
 
     /**

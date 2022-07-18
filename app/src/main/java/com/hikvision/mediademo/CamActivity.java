@@ -8,6 +8,7 @@ import android.util.Log;
 import android.util.Size;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.RelativeLayout;
 
 import com.hikvision.cam2.Camera2FrameCallback;
 import com.hikvision.cam2.Camera2Wrapper;
@@ -29,9 +30,8 @@ public class CamActivity extends AppCompatActivity implements Camera2FrameCallba
 
     protected GLSurfaceView mGLSurfaceView;
     private MyMediaRender myMediaRender;
-
-
     private Camera2Wrapper mCamera2Wrapper;
+    private RelativeLayout mSurfaceViewRoot;
     private static final String[] REQUEST_PERMISSIONS = {
             Manifest.permission.CAMERA,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -74,6 +74,10 @@ public class CamActivity extends AppCompatActivity implements Camera2FrameCallba
     }
 
     private void initViews() {
+        mSurfaceViewRoot = (RelativeLayout) findViewById(R.id.surface_root);
+        RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT);
+        mSurfaceViewRoot.addView(mGLSurfaceView, p);
         myMediaRender.init(mGLSurfaceView);
         mCamera2Wrapper = new Camera2Wrapper(CamActivity.this);
         mCamera2Wrapper.setDefaultPreviewSize(new Size(1600, 1200));
