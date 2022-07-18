@@ -74,10 +74,7 @@ public class CamActivity extends AppCompatActivity implements Camera2FrameCallba
     }
 
     private void initViews() {
-        mSurfaceViewRoot = (RelativeLayout) findViewById(R.id.surface_root);
-        RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
-                RelativeLayout.LayoutParams.MATCH_PARENT);
-        mSurfaceViewRoot.addView(mGLSurfaceView, p);
+        mGLSurfaceView = (GLSurfaceView)findViewById(R.id.glSurfaceView);
         myMediaRender.init(mGLSurfaceView);
         mCamera2Wrapper = new Camera2Wrapper(CamActivity.this);
         mCamera2Wrapper.setDefaultPreviewSize(new Size(1600, 1200));
