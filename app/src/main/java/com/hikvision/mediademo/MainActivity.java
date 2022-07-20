@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private static String TAG = "MainActivity";
     private List<SelectItem> selectItemList = new ArrayList<>();
     private static final int CAM_OPEATION = 0;
-    private static final int FF_OPENGLES_EXAMPLE = 1;
+    private static final int Audio_OPEATION = 1;
     private static final int V4L2CAM_EXAMPLE = 2;
     private static final int Audio_EXAMPLE = 3;
     @Override
@@ -45,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
                 switch (position) {
                     case CAM_OPEATION:
                         startActivity(new Intent(MainActivity.this, CamActivity.class));
+                        break;
+                    case Audio_OPEATION:
+                        startActivity(new Intent(MainActivity.this, AudioActivity.class));
                         break;
                     default:
                         break;

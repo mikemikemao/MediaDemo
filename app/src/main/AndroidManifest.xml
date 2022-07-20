@@ -31,6 +31,7 @@
             />
         <activity android:name=".CamActivity"
                   android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity android:name=".AudioActivity"/>
     </application>
 
 </manifest>
