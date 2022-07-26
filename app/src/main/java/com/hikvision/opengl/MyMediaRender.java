@@ -12,6 +12,10 @@ public class MyMediaRender extends MyCam implements GLSurfaceView.Renderer {
     private static final String TAG = "MyMediaRender";
     private GLSurfaceView mGLSurfaceView;
 
+    public static final int RECORDER_TYPE_SINGLE_VIDEO   = 0; //仅录制视频
+    public static final int RECORDER_TYPE_SINGLE_AUDIO   = 1; //仅录制音频
+    public static final int RECORDER_TYPE_AV             = 2; //同时录制音频和视频,打包成 MP4 文件
+
     private long mNativeContextHandle;
 
     public void init(GLSurfaceView surfaceView) { //for Video
@@ -57,6 +61,12 @@ public class MyMediaRender extends MyCam implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 gl) {
         Log.d(TAG, "onDrawFrame() called with: gl = [" + gl + "]");
         native_OnDrawFrame();
+    }
+
+    //编码
+    public void startRecord(int recorderType, String outUrl, int frameWidth, int frameHeight, long videoBitRate, int fps) {
+        Log.d(TAG, "startRecord() called with: recorderType = [" + recorderType + "], outUrl = [" + outUrl + "], frameWidth = [" + frameWidth + "], frameHeight = [" + frameHeight + "], videoBitRate = [" + videoBitRate + "], fps = [" + fps + "]");
+        native_StartRecord(recorderType, outUrl, frameWidth, frameHeight, videoBitRate, fps);
     }
 
 

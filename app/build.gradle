@@ -4,6 +4,7 @@ plugins {
 
 android {
     compileSdk build_versions.compile_sdk
+    ndkVersion '21.0.6113669'
     defaultConfig {
         applicationId "com.hikvision.mediademo"
         minSdk build_versions.min_sdk

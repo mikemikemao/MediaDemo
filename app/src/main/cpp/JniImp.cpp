@@ -142,7 +142,25 @@ JNIEXPORT void JNICALL native_OnDrawFrame(JNIEnv *env, jobject instance) {
 	if(pContext) pContext->OnDrawFrame();
 }
 
-
+/*
+* Class:     com_hikvision_jni_MyCam
+* Method:    native_StartRecord
+* Signature: ()V
+*/
+JNIEXPORT int JNICALL native_StartRecord(JNIEnv *env,
+                                          jobject instance,
+                                          jint recorder_type,
+                                          jstring out_url,
+                                          jint frame_width,
+                                          jint frame_height,
+                                          jlong video_bit_rate,
+                                          jint fps) {
+    const char* url = env->GetStringUTFChars(out_url, nullptr);
+    MediaRecorderContext *pContext = MediaRecorderContext::GetContext(env, instance);
+    env->ReleaseStringUTFChars(out_url, url);
+    if(pContext) return pContext->StartRecord(recorder_type, url, frame_width, frame_height, video_bit_rate, fps);
+    return 0;
+}
 
 
 #ifdef __cplusplus
@@ -160,6 +178,7 @@ static JNINativeMethod g_RenderMethods[] = {
 		{"native_OnSurfaceCreated",                  "()V",                             (void *)(native_OnSurfaceCreated)},
 		{"native_OnSurfaceChanged",                  "(II)V",                           (void *)(native_OnSurfaceChanged)},
 		{"native_OnDrawFrame",                       "()V",                             (void *)(native_OnDrawFrame)},
+		{"native_StartRecord",                       "(ILjava/lang/String;IIJI)I",      (void *)(native_StartRecord)},
 
 };
 

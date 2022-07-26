@@ -151,3 +151,24 @@ void MediaRecorderContext::OnDrawFrame()
 {
     GLCameraRender::GetInstance()->OnDrawFrame();
 }
+
+int MediaRecorderContext::StartRecord(int recorderType, const char *outUrl,
+                                      int frameWidth, int frameHeight, long videoBitRate,int fps) {
+    LOGCATE("MediaRecorderContext::StartRecord recorderType=%d, outUrl=%s, [w,h]=[%d,%d], videoBitRate=%ld, fps=%d", recorderType, outUrl, frameWidth, frameHeight, videoBitRate, fps);
+    std::unique_lock<std::mutex> lock(m_mutex);
+    switch (recorderType) {
+        case RECORDER_TYPE_SINGLE_VIDEO:
+            if(m_pVideoRecorder == nullptr) {
+//                m_pVideoRecorder = new SingleVideoRecorder(outUrl, frameHeight, frameWidth, videoBitRate, fps);
+//                m_pVideoRecorder->StartRecord();
+            }
+            break;
+
+        default:
+            break;
+    }
+
+
+    return 0;
+
+}

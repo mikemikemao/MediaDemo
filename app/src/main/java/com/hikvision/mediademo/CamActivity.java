@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.util.Size;
 import android.view.Window;
@@ -15,9 +16,15 @@ import com.hikvision.cam2.Camera2Wrapper;
 import com.hikvision.opengl.MyMediaRender;
 
 import static com.hikvision.jni.MyCam.IMAGE_FORMAT_I420;
+import static com.hikvision.opengl.MyMediaRender.RECORDER_TYPE_SINGLE_VIDEO;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
+import java.util.Locale;
 
 /**
  * description ： TODO:类的作用
@@ -32,6 +39,10 @@ public class CamActivity extends AppCompatActivity implements Camera2FrameCallba
     private MyMediaRender myMediaRender;
     private Camera2Wrapper mCamera2Wrapper;
     private RelativeLayout mSurfaceViewRoot;
+    private String mOutUrl;
+    private static final String RESULT_IMG_DIR = "mediaDemo";
+    private static final SimpleDateFormat DateTime_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US);
+
     private static final String[] REQUEST_PERMISSIONS = {
             Manifest.permission.CAMERA,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -87,7 +98,30 @@ public class CamActivity extends AppCompatActivity implements Camera2FrameCallba
         //FileUtils.saveData("/sdcard/video.yuv",data,true);
         myMediaRender.onPreviewFrame(IMAGE_FORMAT_I420, data, width, height);
         myMediaRender.requestRender();
+        //进行编码
+        int frameWidth = mCamera2Wrapper.getPreviewSize().getWidth();
+        int frameHeight = mCamera2Wrapper.getPreviewSize().getHeight();
+        int fps = 25;
+        int bitRate = (int) (frameWidth * frameHeight * fps * 0.25);
+        mOutUrl = getOutFile(".mp4").getAbsolutePath();
+        myMediaRender.startRecord(RECORDER_TYPE_SINGLE_VIDEO, mOutUrl, frameWidth, frameHeight, bitRate, fps);
     }
+
+    public static final File getOutFile(final String ext) {
+        final File dir = new File(Environment.getExternalStorageDirectory(), RESULT_IMG_DIR);
+        Log.d(TAG, "path=" + dir.toString());
+        dir.mkdirs();
+        if (dir.canWrite()) {
+            return new File(dir, "video_" + getDateTimeString() + ext);
+        }
+        return null;
+    }
+
+    private static final String getDateTimeString() {
+        final GregorianCalendar now = new GregorianCalendar();
+        return DateTime_FORMAT.format(now.getTime());
+    }
+
 
     @Override
     public void onCaptureFrame(byte[] data, int width, int height) {

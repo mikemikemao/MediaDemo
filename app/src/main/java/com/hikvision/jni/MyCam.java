@@ -94,4 +94,11 @@ public class MyCam {
      * @return
      */
     public native void native_OnDrawFrame();
+
+    /**
+     * description native_StartRecord
+     * param
+     * @return
+     */
+    protected native int native_StartRecord(int recorderType, String outUrl, int frameWidth, int frameHeight, long videoBitRate, int fps);
 }

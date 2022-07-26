@@ -28,10 +28,10 @@ public class CheckPermissionActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-//            intent.setData(Uri.parse("package:" + this.getPackageName()));
-//            // 1024为REQUEST_CODE
-//            startActivityForResult(intent, 1024);
+            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+            intent.setData(Uri.parse("package:" + this.getPackageName()));
+            // 1024为REQUEST_CODE
+            startActivityForResult(intent, 1024);
             requestPermissions(REQUEST_PERMISSIONS, REQUEST_CODE_ASK_PERMISSIONS);
         }
     }
