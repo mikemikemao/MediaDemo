@@ -1,6 +1,7 @@
 package com.hikvision.jni;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.view.Surface;
@@ -101,4 +102,19 @@ public class MyCam {
      * @return
      */
     protected native int native_StartRecord(int recorderType, String outUrl, int frameWidth, int frameHeight, long videoBitRate, int fps);
+
+    /**
+     * description native_SetSurface  将应用层获取到的surface传递到NDK层
+     * param
+     * @return
+     */
+    public native void native_SetSurface(Surface surface);
+
+    /**
+     * description createStreamingMediaPlayer  创建播放资源 主要是将assets视频数据传传到NDK
+     * param
+     * @return
+     */
+    public static native int native_CreateStreamingMediaPlayer(AssetManager assetMgr, String filename);
+
 }

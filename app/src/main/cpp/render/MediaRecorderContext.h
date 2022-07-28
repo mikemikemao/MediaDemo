@@ -78,7 +78,15 @@ public:
     int StartRecord(int recorderType, const char *outUrl,
                                           int frameWidth, int frameHeight, long videoBitRate,int fps);
 
+    /**
+    * 设置surface
+    * */
+    void setSurface(JNIEnv *jniEnv,jobject surface);
+
+    int createStreamingMediaPlayer();
+
 private:
+    SingleVideoRecorder mSingleVideoRecorder;
     static jfieldID s_ContextHandle;
     SingleVideoRecorder *m_pVideoRecorder = nullptr;
     mutex m_mutex;

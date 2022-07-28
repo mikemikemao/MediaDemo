@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private List<SelectItem> selectItemList = new ArrayList<>();
     private static final int CAM_OPEATION = 0;
     private static final int Audio_OPEATION = 1;
-    private static final int V4L2CAM_EXAMPLE = 2;
+    private static final int DE_MEDIACODEC = 2;
     private static final int Audio_EXAMPLE = 3;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
                     case Audio_OPEATION:
                         startActivity(new Intent(MainActivity.this, AudioActivity.class));
                         break;
+                    case DE_MEDIACODEC:
+                        startActivity(new Intent(MainActivity.this, MediaCodecActivity.class));
+                        break;
                     default:
                         break;
                 }
@@ -57,9 +60,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initItems() {
-        SelectItem cam = new SelectItem("camera", R.drawable.cam);
+        SelectItem cam = new SelectItem("摄像头预览 camera2 + opengl", R.drawable.ic_camera);
         selectItemList.add(cam);
-        SelectItem speaker = new SelectItem("speaker", R.drawable.laba);
+        SelectItem speaker = new SelectItem("speaker", R.drawable.ic_aspect);
         selectItemList.add(speaker);
+        SelectItem deMediacodec = new SelectItem("视频编解码 mediacodec", R.drawable.ic_camera);
+        selectItemList.add(deMediacodec);
     }
 }

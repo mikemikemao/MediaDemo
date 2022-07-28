@@ -16,6 +16,7 @@ include_directories(
         ${CMAKE_SOURCE_DIR}/audio
         ${CMAKE_SOURCE_DIR}/codec
         ${CMAKE_SOURCE_DIR}/render
+        ${CMAKE_SOURCE_DIR}/looper
        )
 
 link_directories(
@@ -29,6 +30,7 @@ file(GLOB src-files
         ${CMAKE_SOURCE_DIR}/utils/*.cpp
         ${CMAKE_SOURCE_DIR}/codec/*.cpp
         ${CMAKE_SOURCE_DIR}/render/*.cpp
+        ${CMAKE_SOURCE_DIR}/looper/*.cpp
         )
 
 add_library( # Sets the name of the library.

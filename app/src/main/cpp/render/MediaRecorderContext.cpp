@@ -172,3 +172,8 @@ int MediaRecorderContext::StartRecord(int recorderType, const char *outUrl,
     return 0;
 
 }
+
+
+void MediaRecorderContext::setSurface(JNIEnv *jniEnv,jobject surface){
+    mSingleVideoRecorder.setSurface(jniEnv,surface);
+}

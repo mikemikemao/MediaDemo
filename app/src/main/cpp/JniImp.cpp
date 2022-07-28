@@ -6,6 +6,7 @@
 #include "Cam2Wrapper.h"
 #include "MediaRecorderContext.h"
 #define NATIVE_CAM_CLASS_NAME "com/hikvision/jni/MyCam"
+#define NATIVE_AUDIO_CLASS_NAME "com/hikvision/jni/MyAudio"
 
 #ifdef __cplusplus
 extern "C" {
@@ -162,11 +163,58 @@ JNIEXPORT int JNICALL native_StartRecord(JNIEnv *env,
     return 0;
 }
 
+/*
+  * Class:     com_hikvision_jni_MyCam
+  * Method:    native_setSurface
+  * Signature: (Landroid/view/SurfaceHolder;)V
+  */
+JNIEXPORT void JNICALL native_SetSurface(JNIEnv *env, jobject instance,jclass surfaceObj){
+	MediaRecorderContext *pContext = MediaRecorderContext::GetContext(env, instance);
+	if(pContext) pContext->setSurface(env,surfaceObj);
+}
+
+/*
+  * Class:     com_hikvision_jni_MyCam
+  * Method:    native_setSurface
+  * Signature: (Landroid/view/SurfaceHolder;)V
+  */
+JNIEXPORT int JNICALL native_CreateStreamingMediaPlayer(JNIEnv *env, jobject instance,jobject assetMgr, jstring filename){
+	//做一些数据转换
+	const char *utf8 = env->GetStringUTFChars(filename, NULL);
+	LOGCATD("opening %s", utf8);
+
+//	off_t outStart, outLen;
+//	AAssetManager* assetManager = AAssetManager_fromJava(env, assetMgr);
+//	if (assetManager==NULL){
+//		LOGCATE("get assetManager failed");
+//		return -1;
+//	}
+//	AAsset* asset = AAssetManager_open(assetManager,utf8,0);
+//	if (asset == NULL){
+//		LOGCATE("get asset failed");
+//		return -1;
+//	}
+//	int fd = AAsset_openFileDescriptor(asset,&outStart, &outLen);
+//	if (fd < 0){
+//		LOGCATE("AAsset_openFileDescriptor failed");
+//		return -1;
+//	}
+//
+//	env->ReleaseStringUTFChars(filename, utf8);
+//	if (fd < 0) {
+//		LOGCATE("failed to open file: %s %d (%s)", utf8, fd, strerror(errno));
+//		return JNI_FALSE;
+//	}
+//	MediaRecorderContext *pContext = MediaRecorderContext::GetContext(env, instance);
+//	if(pContext) pContext->createStreamingMediaPlayer(assetMgr,filename);
+}
+
 
 #ifdef __cplusplus
 }
 #endif
 
+//视频预览相关
 static JNINativeMethod g_RenderMethods[] = {
 		{"native_startPreview",                      "(Landroid/view/Surface;)V",       (void *)(startPreview)},
 		{"native_stopPreview",                       "()V",                             (void *)(stopPreview)},
@@ -179,6 +227,15 @@ static JNINativeMethod g_RenderMethods[] = {
 		{"native_OnSurfaceChanged",                  "(II)V",                           (void *)(native_OnSurfaceChanged)},
 		{"native_OnDrawFrame",                       "()V",                             (void *)(native_OnDrawFrame)},
 		{"native_StartRecord",                       "(ILjava/lang/String;IIJI)I",      (void *)(native_StartRecord)},
+		{"native_SetSurface",                        "(Landroid/view/Surface;)V",       (void *)(native_SetSurface)},
+		{"native_CreateStreamingMediaPlayer",        "(Landroid/content/res/AssetManager;Ljava/lang/String;)I",(void *)(native_CreateStreamingMediaPlayer)},
+
+};
+
+//mediacodec相关
+static JNINativeMethod g_AudioMethods[] = {
+
+
 
 };
 
@@ -225,7 +282,7 @@ extern "C" jint JNI_OnLoad(JavaVM *jvm, void *p)
 	{
 		return jniRet;
 	}
-
+	//视频预览相关操作
 	jint regRet = RegisterNativeMethods(env, NATIVE_CAM_CLASS_NAME, g_RenderMethods,
 										sizeof(g_RenderMethods) /
 										sizeof(g_RenderMethods[0]));
@@ -233,6 +290,15 @@ extern "C" jint JNI_OnLoad(JavaVM *jvm, void *p)
 	{
 		return JNI_ERR;
 	}
+	//mediacodec相关操作
+	regRet = RegisterNativeMethods(env, NATIVE_AUDIO_CLASS_NAME, g_AudioMethods,
+										sizeof(g_AudioMethods) /
+										sizeof(g_AudioMethods[0]));
+	if (regRet != JNI_TRUE)
+	{
+		return JNI_ERR;
+	}
+
 	return JNI_VERSION_1_6;
 }
 
@@ -244,4 +310,5 @@ extern "C" void JNI_OnUnload(JavaVM *jvm, void *p)
 		return;
 	}
 	UnregisterNativeMethods(env, NATIVE_CAM_CLASS_NAME);
+	UnregisterNativeMethods(env, NATIVE_AUDIO_CLASS_NAME);
 }
