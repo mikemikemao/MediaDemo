@@ -581,17 +581,21 @@ bool GLCameraRender::CreateFrameBufferObj() {
 
 void GLCameraRender::GetRenderFrameFromFBO() {
     LOGCATE("GLCameraRender::GetRenderFrameFromFBO m_RenderFrameCallback=%p", m_RenderFrameCallback);
+//    if(m_RenderFrameCallback != nullptr) {
+//        uint8_t *pBuffer = new uint8_t[m_RenderImage.width * m_RenderImage.height * 4];
+//        NativeImage nativeImage = m_RenderImage;
+//        nativeImage.format = IMAGE_FORMAT_RGBA;
+//        nativeImage.width = m_RenderImage.height;
+//        nativeImage.height = m_RenderImage.width;
+//        nativeImage.pLineSize[0] = nativeImage.width * 4;
+//        nativeImage.ppPlane[0] = pBuffer;
+//        glReadPixels(0, 0, nativeImage.width, nativeImage.height, GL_RGBA, GL_UNSIGNED_BYTE, pBuffer);
+//        m_RenderFrameCallback(m_CallbackContext, &nativeImage);
+//        delete []pBuffer;
+//    }
+    //还是yuv420
     if(m_RenderFrameCallback != nullptr) {
-        uint8_t *pBuffer = new uint8_t[m_RenderImage.width * m_RenderImage.height * 4];
-        NativeImage nativeImage = m_RenderImage;
-        nativeImage.format = IMAGE_FORMAT_RGBA;
-        nativeImage.width = m_RenderImage.height;
-        nativeImage.height = m_RenderImage.width;
-        nativeImage.pLineSize[0] = nativeImage.width * 4;
-        nativeImage.ppPlane[0] = pBuffer;
-        glReadPixels(0, 0, nativeImage.width, nativeImage.height, GL_RGBA, GL_UNSIGNED_BYTE, pBuffer);
-        m_RenderFrameCallback(m_CallbackContext, &nativeImage);
-        delete []pBuffer;
+        m_RenderFrameCallback(m_CallbackContext, &m_RenderImage);
     }
 }
 

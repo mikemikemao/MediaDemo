@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.util.Size;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
@@ -94,17 +95,10 @@ public class CamActivity extends AppCompatActivity implements Camera2FrameCallba
 
     @Override
     public void onPreviewFrame(byte[] data, int width, int height) {
-        Log.d(TAG, "onPreviewFrame() called with: data = [" + data + "], width = [" + width + "], height = [" + height + "]"+ "size = "+ data.length);
+        //Log.d(TAG, "onPreviewFrame() called with: data = [" + data + "], width = [" + width + "], height = [" + height + "]"+ "size = "+ data.length);
         //FileUtils.saveData("/sdcard/video.yuv",data,true);
         myMediaRender.onPreviewFrame(IMAGE_FORMAT_I420, data, width, height);
         myMediaRender.requestRender();
-        //进行编码
-        int frameWidth = mCamera2Wrapper.getPreviewSize().getWidth();
-        int frameHeight = mCamera2Wrapper.getPreviewSize().getHeight();
-        int fps = 25;
-        int bitRate = (int) (frameWidth * frameHeight * fps * 0.25);
-        mOutUrl = getOutFile(".mp4").getAbsolutePath();
-        myMediaRender.startRecord(RECORDER_TYPE_SINGLE_VIDEO, mOutUrl, frameWidth, frameHeight, bitRate, fps);
     }
 
     public static final File getOutFile(final String ext) {
@@ -137,5 +131,15 @@ public class CamActivity extends AppCompatActivity implements Camera2FrameCallba
             }
         }
         return true;
+    }
+
+    public void onClickStartRecord(View view) {
+        //进行编码
+        int frameWidth = mCamera2Wrapper.getPreviewSize().getWidth();
+        int frameHeight = mCamera2Wrapper.getPreviewSize().getHeight();
+        int fps = 25;
+        int bitRate = (int) (frameWidth * frameHeight * fps * 0.25);
+        mOutUrl = getOutFile(".mp4").getAbsolutePath();
+        myMediaRender.startRecord(RECORDER_TYPE_SINGLE_VIDEO, mOutUrl, frameWidth, frameHeight, bitRate, fps);
     }
 }

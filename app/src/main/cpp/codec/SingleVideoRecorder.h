@@ -8,9 +8,15 @@
 #include <android/native_window_jni.h>
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
+#include <utils/ImageDef.h>
 #include "media/NdkMediaCodec.h"
 #include "media/NdkMediaExtractor.h"
 #include "cstdio"
+#include "thread"
+#include "ThreadSafeQueue.h"
+
+
+using namespace std;
 
 enum {
     kMsgCodecBuffer,
@@ -24,19 +30,24 @@ enum {
 
 class SingleVideoRecorder {
 public:
-    SingleVideoRecorder();
+    SingleVideoRecorder(const char* outUrl, int frameWidth, int frameHeight, long bitRate, int fps);
     ~SingleVideoRecorder(){}
-    int  startRecord();
-    void setSurface(JNIEnv *jniEnv,jobject surface);
-    int CreateStreamingMediaPlayer(int width,int height);
+    int StartRecord();
+    int OnFrame2Encode(NativeImage *inputFrame);
 private:
-    FILE *fp_out = NULL;
-    ANativeWindow* m_window;
-    AMediaFormat *m_format;
-    AMediaCodec *m_codec;
-    int64_t renderstart;
-    bool isPlaying;
-    bool renderonce;
+    static void StartH264EncoderThread(SingleVideoRecorder *context);
+private:
+    char m_outUrl[1024] = {0};
+    int m_frameWidth;
+    int m_frameHeight;
+    int m_frameIndex = 0;
+    long m_bitRate;
+    int m_frameRate;
+
+    AMediaCodec *codec;
+    thread *m_encodeThread = nullptr;
+    ThreadSafeQueue<NativeImage *> m_frameQueue;
+    volatile int m_exit = 0;
 };
 
 

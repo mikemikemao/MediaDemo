@@ -38,7 +38,7 @@ public class MyMediaRender extends MyCam implements GLSurfaceView.Renderer {
     }
 
     public void onPreviewFrame(int format, byte[] data, int width, int height) {
-        Log.d(TAG, "onPreviewFrame() called with: data = [" + data + "], width = [" + width + "], height = [" + height + "]");
+        //Log.d(TAG, "onPreviewFrame() called with: data = [" + data + "], width = [" + width + "], height = [" + height + "]");
         native_OnPreviewFrame(format, data, width, height);
     }
 

@@ -83,7 +83,7 @@ MediaRecorderContext *MediaRecorderContext::GetContext(JNIEnv *env, jobject inst
 int MediaRecorderContext::Init()
 {
     GLCameraRender::GetInstance()->Init(0, 0, nullptr);
-    //GLCameraRender::GetInstance()->SetRenderCallback(this, OnGLRenderFrame);
+    GLCameraRender::GetInstance()->SetRenderCallback(this, OnGLRenderFrame);
     return 0;
 }
 
@@ -152,6 +152,15 @@ void MediaRecorderContext::OnDrawFrame()
     GLCameraRender::GetInstance()->OnDrawFrame();
 }
 
+//回调 将YUV数据转成RGBA传回
+void MediaRecorderContext::OnGLRenderFrame(void *ctx, NativeImage *pImage) {
+    LOGCATE("MediaRecorderContext::OnGLRenderFrame ctx=%p, pImage=%p", ctx, pImage);
+    MediaRecorderContext *context = static_cast<MediaRecorderContext *>(ctx);
+    std::unique_lock<std::mutex> lock(context->m_mutex);
+    if(context->m_pVideoRecorder != nullptr)
+        context->m_pVideoRecorder->OnFrame2Encode(pImage);
+}
+
 int MediaRecorderContext::StartRecord(int recorderType, const char *outUrl,
                                       int frameWidth, int frameHeight, long videoBitRate,int fps) {
     LOGCATE("MediaRecorderContext::StartRecord recorderType=%d, outUrl=%s, [w,h]=[%d,%d], videoBitRate=%ld, fps=%d", recorderType, outUrl, frameWidth, frameHeight, videoBitRate, fps);
@@ -159,8 +168,8 @@ int MediaRecorderContext::StartRecord(int recorderType, const char *outUrl,
     switch (recorderType) {
         case RECORDER_TYPE_SINGLE_VIDEO:
             if(m_pVideoRecorder == nullptr) {
-//                m_pVideoRecorder = new SingleVideoRecorder(outUrl, frameHeight, frameWidth, videoBitRate, fps);
-//                m_pVideoRecorder->StartRecord();
+                m_pVideoRecorder = new SingleVideoRecorder(outUrl, frameHeight, frameWidth, videoBitRate, fps);
+                m_pVideoRecorder->StartRecord();
             }
             break;
 
@@ -171,9 +180,4 @@ int MediaRecorderContext::StartRecord(int recorderType, const char *outUrl,
 
     return 0;
 
-}
-
-
-void MediaRecorderContext::setSurface(JNIEnv *jniEnv,jobject surface){
-    mSingleVideoRecorder.setSurface(jniEnv,surface);
 }

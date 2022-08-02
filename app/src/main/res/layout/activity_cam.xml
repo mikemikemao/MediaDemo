@@ -6,6 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".CamActivity">
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_startRecord"
+        android:text="开始编码"
+        android:onClick="onClickStartRecord"/>
     <android.opengl.GLSurfaceView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

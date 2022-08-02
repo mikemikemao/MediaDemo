@@ -72,21 +72,18 @@ public:
   * */
     void OnDrawFrame();
 
+    //回调 将YUV数据转成RGBA传回
+    static void OnGLRenderFrame(void *ctx, NativeImage *pImage);
+
     /**
   * 开始编码
   * */
     int StartRecord(int recorderType, const char *outUrl,
                                           int frameWidth, int frameHeight, long videoBitRate,int fps);
 
-    /**
-    * 设置surface
-    * */
-    void setSurface(JNIEnv *jniEnv,jobject surface);
-
-    int createStreamingMediaPlayer();
 
 private:
-    SingleVideoRecorder mSingleVideoRecorder;
+    SingleVideoRecorder* mSingleVideoRecorder;
     static jfieldID s_ContextHandle;
     SingleVideoRecorder *m_pVideoRecorder = nullptr;
     mutex m_mutex;

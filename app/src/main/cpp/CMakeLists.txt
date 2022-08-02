@@ -17,6 +17,7 @@ include_directories(
         ${CMAKE_SOURCE_DIR}/codec
         ${CMAKE_SOURCE_DIR}/render
         ${CMAKE_SOURCE_DIR}/looper
+        ${CMAKE_SOURCE_DIR}/common
        )
 
 link_directories(
@@ -31,6 +32,7 @@ file(GLOB src-files
         ${CMAKE_SOURCE_DIR}/codec/*.cpp
         ${CMAKE_SOURCE_DIR}/render/*.cpp
         ${CMAKE_SOURCE_DIR}/looper/*.cpp
+        ${CMAKE_SOURCE_DIR}/common/*.cpp
         )
 
 add_library( # Sets the name of the library.
@@ -54,6 +56,7 @@ set(native-libs
         OpenSLES
         log
         OpenSLES
+        mediandk
         camera2ndk
         m
         z
