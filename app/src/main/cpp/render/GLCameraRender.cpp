@@ -167,10 +167,10 @@ void GLCameraRender::UpdateMVPMatrix(int angleX, int angleY, float scaleX, float
     //glm::mat4 Projection = glm::perspective(45.0f,ratio, 0.1f,100.f);
 
     // View matrix
-    glm::mat4 View = glm::lookAt(
-            glm::vec3(0, 0, 4), // Camera is at (0,0,1), in World Space
-            glm::vec3(0, 0, 0), // and looks at the origin
-            glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
+    glm::mat4 View = glm::lookAt(//函数返回一个4×4的视图矩阵（view矩阵）
+            glm::vec3(0, 0, 4), // Camera is at (0,0,1), in World Space eye 表示摄像机所在位置，在本文中是世界坐标系原点，
+            glm::vec3(0, 0, 0), // and looks at the origin center 表示摄像机要看向的中心点的位置，
+            glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down) up 表示摄像机的三个方位向量中的up向量。
     );
 
     // Model matrix
@@ -581,21 +581,17 @@ bool GLCameraRender::CreateFrameBufferObj() {
 
 void GLCameraRender::GetRenderFrameFromFBO() {
     LOGCATE("GLCameraRender::GetRenderFrameFromFBO m_RenderFrameCallback=%p", m_RenderFrameCallback);
-//    if(m_RenderFrameCallback != nullptr) {
-//        uint8_t *pBuffer = new uint8_t[m_RenderImage.width * m_RenderImage.height * 4];
-//        NativeImage nativeImage = m_RenderImage;
-//        nativeImage.format = IMAGE_FORMAT_RGBA;
-//        nativeImage.width = m_RenderImage.height;
-//        nativeImage.height = m_RenderImage.width;
-//        nativeImage.pLineSize[0] = nativeImage.width * 4;
-//        nativeImage.ppPlane[0] = pBuffer;
-//        glReadPixels(0, 0, nativeImage.width, nativeImage.height, GL_RGBA, GL_UNSIGNED_BYTE, pBuffer);
-//        m_RenderFrameCallback(m_CallbackContext, &nativeImage);
-//        delete []pBuffer;
-//    }
-    //还是yuv420
     if(m_RenderFrameCallback != nullptr) {
-        m_RenderFrameCallback(m_CallbackContext, &m_RenderImage);
+        uint8_t *pBuffer = new uint8_t[m_RenderImage.width * m_RenderImage.height * 4];
+        NativeImage nativeImage = m_RenderImage;
+        nativeImage.format = IMAGE_FORMAT_RGBA;
+        nativeImage.width = m_RenderImage.height;
+        nativeImage.height = m_RenderImage.width;
+        nativeImage.pLineSize[0] = nativeImage.width * 4;
+        nativeImage.ppPlane[0] = pBuffer;
+        glReadPixels(0, 0, nativeImage.width, nativeImage.height, GL_RGBA, GL_UNSIGNED_BYTE, pBuffer);
+        m_RenderFrameCallback(m_CallbackContext, &nativeImage);
+        delete []pBuffer;
     }
 }
 

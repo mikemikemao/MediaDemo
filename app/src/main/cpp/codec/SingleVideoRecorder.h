@@ -27,11 +27,12 @@ enum {
     kMsgSeek,
 };
 
+#define AMEDIACODEC_BUFFER_FLAG_KEY_FRAME 1
 
 class SingleVideoRecorder {
 public:
     SingleVideoRecorder(const char* outUrl, int frameWidth, int frameHeight, long bitRate, int fps);
-    ~SingleVideoRecorder(){}
+    ~SingleVideoRecorder();
     int StartRecord();
     int OnFrame2Encode(NativeImage *inputFrame);
 private:
