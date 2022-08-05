@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.util.Size;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -19,6 +21,7 @@ import com.hikvision.opengl.MyMediaRender;
 import static com.hikvision.jni.MyCam.IMAGE_FORMAT_I420;
 import static com.hikvision.opengl.MyMediaRender.RECORDER_TYPE_SINGLE_VIDEO;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -35,6 +38,9 @@ import java.util.Locale;
  */
 public class CamActivity extends AppCompatActivity implements Camera2FrameCallback{
     final static String TAG = "MainActivity";
+
+    SurfaceView mySurfaceView;
+    SurfaceHolder mySurfaceHolder;
 
     protected GLSurfaceView mGLSurfaceView;
     private MyMediaRender myMediaRender;
@@ -60,6 +66,27 @@ public class CamActivity extends AppCompatActivity implements Camera2FrameCallba
         mGLSurfaceView = new GLSurfaceView(this);
         myMediaRender = new MyMediaRender();
         initViews();
+
+        mySurfaceView = (SurfaceView) findViewById(R.id.mySurfaceView);
+        mySurfaceHolder = mySurfaceView.getHolder();
+        mySurfaceHolder.addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(@NonNull SurfaceHolder holder) {
+                Log.v(TAG, "surfaceCreated");
+                myMediaRender.native_SetSurface(holder.getSurface());
+            }
+
+            @Override
+            public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
+                Log.v(TAG, "surfaceChanged format=" + format + ", width=" + width + ", height="
+                        + height);
+            }
+
+            @Override
+            public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
+                Log.v(TAG, "surfaceDestroyed");
+            }
+        });
     }
 
     @Override

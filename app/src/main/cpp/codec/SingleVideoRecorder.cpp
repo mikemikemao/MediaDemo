@@ -23,6 +23,8 @@ SingleVideoRecorder::SingleVideoRecorder(const char *outUrl, int frameWidth, int
 
 SingleVideoRecorder::~SingleVideoRecorder(){
     if(codec!=NULL){
+        AMediaCodec_flush(codec);
+        AMediaCodec_stop(codec);
         AMediaCodec_delete(codec);
         codec = NULL;
     }

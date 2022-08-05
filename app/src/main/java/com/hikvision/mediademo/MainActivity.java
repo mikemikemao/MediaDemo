@@ -49,9 +49,6 @@ public class MainActivity extends AppCompatActivity {
                     case Audio_OPEATION:
                         startActivity(new Intent(MainActivity.this, AudioActivity.class));
                         break;
-                    case DE_MEDIACODEC:
-                        startActivity(new Intent(MainActivity.this, MediaCodecActivity.class));
-                        break;
                     default:
                         break;
                 }
@@ -64,7 +61,5 @@ public class MainActivity extends AppCompatActivity {
         selectItemList.add(cam);
         SelectItem speaker = new SelectItem("speaker", R.drawable.ic_aspect);
         selectItemList.add(speaker);
-        SelectItem deMediacodec = new SelectItem("视频编解码 mediacodec", R.drawable.ic_camera);
-        selectItemList.add(deMediacodec);
     }
 }

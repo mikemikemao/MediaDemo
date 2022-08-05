@@ -79,6 +79,7 @@ public:
         return glm::vec3(2 * texCoord.x - 1, 1 - 2 * texCoord.y, 0);
     }
 
+    static GLuint CreateTexture(int width, int height, GLenum type);
 };
 
 #endif // _BYTE_FLOW_GL_UTILS_H_

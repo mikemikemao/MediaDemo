@@ -5,6 +5,7 @@
 #include "MediaRecorderContext.h"
 #include "utils/LogUtil.h"
 #include "GLCameraRender.h"
+#include "EGLRender.h"
 
 jfieldID MediaRecorderContext::s_ContextHandle = 0L;
 
@@ -15,6 +16,14 @@ MediaRecorderContext::MediaRecorderContext() {
 MediaRecorderContext::~MediaRecorderContext()
 {
     GLCameraRender::ReleaseInstance();
+    if (m_window!=NULL){
+        ANativeWindow_release(m_window);
+        m_window = NULL;
+    }
+    if (eglRender!=NULL){
+        delete eglRender;
+        eglRender = NULL;
+    }
 }
 
 
@@ -163,7 +172,26 @@ void MediaRecorderContext::OnGLRenderFrame(void *ctx, NativeImage *pImage) {
 
 int MediaRecorderContext::StartRecord(int recorderType, const char *outUrl,
                                       int frameWidth, int frameHeight, long videoBitRate,int fps) {
+    int ret = 0;
     LOGCATE("MediaRecorderContext::StartRecord recorderType=%d, outUrl=%s, [w,h]=[%d,%d], videoBitRate=%ld, fps=%d", recorderType, outUrl, frameWidth, frameHeight, videoBitRate, fps);
+    //第一步
+    eglRender = new EGLRender();
+    ret=eglRender->init(EGL_NO_CONTEXT, FLAG_TRY_GLES3);
+    if (ret!=0){
+        LOGCATE("MediaRecorderContext::eglRender->init failed ret=%d",ret);
+        return ret;
+    }
+    EGLSurface windSurface = eglRender->createOffscreenSurface(frameWidth,frameHeight);
+    if (windSurface == NULL){
+        LOGCATE("MediaRecorderContext::createWindowSurface failed");
+        return ret;
+    }
+    ret = eglRender->makeCurrent(windSurface, windSurface);
+    if (ret!=0){
+        LOGCATE("MediaRecorderContext::makeCurrent failed ret=%d",ret);
+        return ret;
+    }
+
     std::unique_lock<std::mutex> lock(m_mutex);
     switch (recorderType) {
         case RECORDER_TYPE_SINGLE_VIDEO:
@@ -181,3 +209,17 @@ int MediaRecorderContext::StartRecord(int recorderType, const char *outUrl,
     return 0;
 
 }
+
+
+/**
+ * 设置应用层传下来的surface
+ * */
+void MediaRecorderContext::SetSurface(JNIEnv *env,jclass surfaceObj){
+    if (m_window!=NULL){
+        ANativeWindow_release(m_window);
+        m_window = NULL;
+    }
+    m_window = ANativeWindow_fromSurface(env, surfaceObj);
+}
+
+

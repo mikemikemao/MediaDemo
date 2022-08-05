@@ -8,6 +8,7 @@
 #include <thread>
 #include <codec/SingleVideoRecorder.h>
 #include "utils/ImageDef.h"
+#include "EGLRender.h"
 
 using namespace std;
 
@@ -82,11 +83,20 @@ public:
                                           int frameWidth, int frameHeight, long videoBitRate,int fps);
 
 
+    /**
+  * 设置应用层传下来的surface
+  * */
+    void SetSurface(JNIEnv *env,jclass surfaceObj);
+
+
 private:
     SingleVideoRecorder* mSingleVideoRecorder;
     static jfieldID s_ContextHandle;
     SingleVideoRecorder *m_pVideoRecorder = nullptr;
     mutex m_mutex;
+
+    ANativeWindow* m_window = NULL;
+    EGLRender* eglRender = NULL;
 
 };
 

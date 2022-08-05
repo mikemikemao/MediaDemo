@@ -163,6 +163,18 @@ JNIEXPORT int JNICALL native_StartRecord(JNIEnv *env,
     return 0;
 }
 
+
+/*
+* Class:     com_hikvision_jni_MyCam
+* Method:    native_StartRecord
+* Signature: ()V
+*/
+JNIEXPORT void JNICALL native_SetSurface(JNIEnv *env,jobject instance,jclass surfaceObj) {
+	MediaRecorderContext *pContext = MediaRecorderContext::GetContext(env, instance);
+	if(pContext)  pContext->SetSurface(env,surfaceObj);
+}
+
+
 #ifdef __cplusplus
 }
 #endif
@@ -180,6 +192,7 @@ static JNINativeMethod g_RenderMethods[] = {
 		{"native_OnSurfaceChanged",                  "(II)V",                           (void *)(native_OnSurfaceChanged)},
 		{"native_OnDrawFrame",                       "()V",                             (void *)(native_OnDrawFrame)},
 		{"native_StartRecord",                       "(ILjava/lang/String;IIJI)I",      (void *)(native_StartRecord)},
+		{"native_SetSurface",                        "(Landroid/view/Surface;)V",       (void *)(native_SetSurface)},
 
 };
 
