@@ -39,9 +39,6 @@ import java.util.Locale;
 public class CamActivity extends AppCompatActivity implements Camera2FrameCallback{
     final static String TAG = "MainActivity";
 
-    SurfaceView mySurfaceView;
-    SurfaceHolder mySurfaceHolder;
-
     protected GLSurfaceView mGLSurfaceView;
     private MyMediaRender myMediaRender;
     private Camera2Wrapper mCamera2Wrapper;
@@ -66,27 +63,6 @@ public class CamActivity extends AppCompatActivity implements Camera2FrameCallba
         mGLSurfaceView = new GLSurfaceView(this);
         myMediaRender = new MyMediaRender();
         initViews();
-
-        mySurfaceView = (SurfaceView) findViewById(R.id.mySurfaceView);
-        mySurfaceHolder = mySurfaceView.getHolder();
-        mySurfaceHolder.addCallback(new SurfaceHolder.Callback() {
-            @Override
-            public void surfaceCreated(@NonNull SurfaceHolder holder) {
-                Log.v(TAG, "surfaceCreated");
-                myMediaRender.native_SetSurface(holder.getSurface());
-            }
-
-            @Override
-            public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
-                Log.v(TAG, "surfaceChanged format=" + format + ", width=" + width + ", height="
-                        + height);
-            }
-
-            @Override
-            public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
-                Log.v(TAG, "surfaceDestroyed");
-            }
-        });
     }
 
     @Override

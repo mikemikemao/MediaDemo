@@ -15,12 +15,8 @@
         android:onClick="onClickStartRecord"/>
     <android.opengl.GLSurfaceView
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="match_parent"
         android:id="@+id/glSurfaceView"/>
 
-    <SurfaceView
-        android:layout_width="match_parent"
-        android:layout_height="500dp"
-        android:id="@+id/mySurfaceView"/>
 
 </LinearLayout>

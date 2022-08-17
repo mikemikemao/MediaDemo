@@ -171,7 +171,7 @@ JNIEXPORT int JNICALL native_StartRecord(JNIEnv *env,
 */
 JNIEXPORT void JNICALL native_SetSurface(JNIEnv *env,jobject instance,jclass surfaceObj) {
 	MediaRecorderContext *pContext = MediaRecorderContext::GetContext(env, instance);
-	if(pContext)  pContext->SetSurface(env,surfaceObj);
+	//if(pContext)  pContext->SetSurface(env,surfaceObj);
 }
 
 

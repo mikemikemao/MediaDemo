@@ -17,10 +17,7 @@ public:
         m_RenderType = type;
     }
     virtual ~VideoRender(){}
-    virtual void Init(int videoWidth, int videoHeight, int *dstSize) = 0;
     virtual void RenderVideoFrame(NativeImage *pImage) = 0;
-    virtual void UnInit() = 0;
-
     int GetRenderType() {
         return m_RenderType;
     }

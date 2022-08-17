@@ -16,14 +16,6 @@ MediaRecorderContext::MediaRecorderContext() {
 MediaRecorderContext::~MediaRecorderContext()
 {
     GLCameraRender::ReleaseInstance();
-    if (m_window!=NULL){
-        ANativeWindow_release(m_window);
-        m_window = NULL;
-    }
-    if (eglRender!=NULL){
-        delete eglRender;
-        eglRender = NULL;
-    }
 }
 
 
@@ -43,16 +35,13 @@ void MediaRecorderContext::StoreContext(JNIEnv *env, jobject instance, MediaReco
         LOGCATE("MediaRecorderContext::StoreContext cls == NULL");
         return;
     }
-
     s_ContextHandle = env->GetFieldID(cls, "mNativeContextHandle", "J");
     if (s_ContextHandle == NULL)
     {
         LOGCATE("MediaRecorderContext::StoreContext s_ContextHandle == NULL");
         return;
     }
-
     env->SetLongField(instance, s_ContextHandle, reinterpret_cast<jlong>(pContext));
-
 }
 
 
@@ -64,7 +53,6 @@ void MediaRecorderContext::DeleteContext(JNIEnv *env, jobject instance)
         LOGCATE("MediaRecorderContext::DeleteContext Could not find render context.");
         return;
     }
-
     MediaRecorderContext *pContext = reinterpret_cast<MediaRecorderContext *>(env->GetLongField(
             instance, s_ContextHandle));
     if (pContext)
@@ -77,13 +65,11 @@ void MediaRecorderContext::DeleteContext(JNIEnv *env, jobject instance)
 MediaRecorderContext *MediaRecorderContext::GetContext(JNIEnv *env, jobject instance)
 {
     LOGCATE("MediaRecorderContext::GetContext");
-
     if (s_ContextHandle == NULL)
     {
         LOGCATE("MediaRecorderContext::GetContext Could not find render context.");
         return NULL;
     }
-
     MediaRecorderContext *pContext = reinterpret_cast<MediaRecorderContext *>(env->GetLongField(
             instance, s_ContextHandle));
     return pContext;
@@ -91,7 +77,7 @@ MediaRecorderContext *MediaRecorderContext::GetContext(JNIEnv *env, jobject inst
 
 int MediaRecorderContext::Init()
 {
-    GLCameraRender::GetInstance()->Init(0, 0, nullptr);
+    //设置回调函数
     GLCameraRender::GetInstance()->SetRenderCallback(this, OnGLRenderFrame);
     return 0;
 }
@@ -99,7 +85,6 @@ int MediaRecorderContext::Init()
 int MediaRecorderContext::UnInit()
 {
     GLCameraRender::GetInstance()->UnInit();
-
     return 0;
 }
 
@@ -172,26 +157,6 @@ void MediaRecorderContext::OnGLRenderFrame(void *ctx, NativeImage *pImage) {
 
 int MediaRecorderContext::StartRecord(int recorderType, const char *outUrl,
                                       int frameWidth, int frameHeight, long videoBitRate,int fps) {
-    int ret = 0;
-    LOGCATE("MediaRecorderContext::StartRecord recorderType=%d, outUrl=%s, [w,h]=[%d,%d], videoBitRate=%ld, fps=%d", recorderType, outUrl, frameWidth, frameHeight, videoBitRate, fps);
-    //第一步
-    eglRender = new EGLRender();
-    ret=eglRender->init(EGL_NO_CONTEXT, FLAG_TRY_GLES3);
-    if (ret!=0){
-        LOGCATE("MediaRecorderContext::eglRender->init failed ret=%d",ret);
-        return ret;
-    }
-    EGLSurface windSurface = eglRender->createOffscreenSurface(frameWidth,frameHeight);
-    if (windSurface == NULL){
-        LOGCATE("MediaRecorderContext::createWindowSurface failed");
-        return ret;
-    }
-    ret = eglRender->makeCurrent(windSurface, windSurface);
-    if (ret!=0){
-        LOGCATE("MediaRecorderContext::makeCurrent failed ret=%d",ret);
-        return ret;
-    }
-
     std::unique_lock<std::mutex> lock(m_mutex);
     switch (recorderType) {
         case RECORDER_TYPE_SINGLE_VIDEO:
@@ -204,22 +169,5 @@ int MediaRecorderContext::StartRecord(int recorderType, const char *outUrl,
         default:
             break;
     }
-
-
     return 0;
-
 }
-
-
-/**
- * 设置应用层传下来的surface
- * */
-void MediaRecorderContext::SetSurface(JNIEnv *env,jclass surfaceObj){
-    if (m_window!=NULL){
-        ANativeWindow_release(m_window);
-        m_window = NULL;
-    }
-    m_window = ANativeWindow_fromSurface(env, surfaceObj);
-}
-
-

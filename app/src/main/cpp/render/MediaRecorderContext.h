@@ -26,7 +26,6 @@ public:
      * 销毁GLCameraRender的单例模式
      * */
     ~MediaRecorderContext();
-
     /**
     * 创建类的对象，当作赋值与mNativeContextHandle
     * */
@@ -82,22 +81,10 @@ public:
     int StartRecord(int recorderType, const char *outUrl,
                                           int frameWidth, int frameHeight, long videoBitRate,int fps);
 
-
-    /**
-  * 设置应用层传下来的surface
-  * */
-    void SetSurface(JNIEnv *env,jclass surfaceObj);
-
-
 private:
-    SingleVideoRecorder* mSingleVideoRecorder;
     static jfieldID s_ContextHandle;
     SingleVideoRecorder *m_pVideoRecorder = nullptr;
     mutex m_mutex;
-
-    ANativeWindow* m_window = NULL;
-    EGLRender* eglRender = NULL;
-
 };
 
 

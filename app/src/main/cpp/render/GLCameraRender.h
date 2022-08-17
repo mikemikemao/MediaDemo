@@ -39,49 +39,28 @@ typedef void (*OnRenderFrameCallback)(void*, NativeImage*);
 
 class GLCameraRender: public VideoRender, public BaseGLRender{
 public:
-    //初始化预览帧的宽高
-    virtual void Init(int videoWidth, int videoHeight, int *dstSize);
-    //渲染一帧视频
-    virtual void RenderVideoFrame(NativeImage *pImage);
-    virtual void UnInit();
-
-    //GLSurfaceView 的三个回调
-    virtual void OnSurfaceCreated();
-    virtual void OnSurfaceChanged(int w, int h);
-    virtual void OnDrawFrame();
-
+    //单例模式
     static GLCameraRender *GetInstance();
     static void ReleaseInstance();
-
-    //更新变换矩阵，Camera预览帧需要进行旋转
-    virtual void UpdateMVPMatrix(int angleX, int angleY, float scaleX, float scaleY);
-    virtual void UpdateMVPMatrix(TransformMatrix * pTransformMatrix);
-    virtual void SetTouchLoc(float touchX, float touchY) {
-        m_TouchXY.x = touchX / m_ScreenSize.x;
-        m_TouchXY.y = touchY / m_ScreenSize.y;
-    }
-
     //添加好滤镜之后，视频帧的回调，然后将带有滤镜的视频帧放入编码队列
     void SetRenderCallback(void *ctx, OnRenderFrameCallback callback) {
         m_CallbackContext = ctx;
         m_RenderFrameCallback = callback;
     }
-
-    //加载滤镜素材图像
-    void SetLUTImage(int index, NativeImage *pLUTImg);
-
-    //加载 Java 层着色器脚本
-    void SetFragShaderStr(int index, char *pShaderStr, int strSize);
-
+    //渲染一帧视频
+    virtual void RenderVideoFrame(NativeImage *pImage);
+    virtual void UnInit();
+    //GLSurfaceView 的三个回调
+    virtual void OnSurfaceCreated();
+    virtual void OnSurfaceChanged(int w, int h);
+    virtual void OnDrawFrame();
 private:
     GLCameraRender();
     virtual ~GLCameraRender();
     bool CreateFrameBufferObj();
-
     void GetRenderFrameFromFBO();
-    //创建或更新滤镜素材纹理
-    void UpdateExtTexture();
 
+private:
     static std::mutex m_Mutex;
     static GLCameraRender* s_Instance;
     GLuint m_ProgramObj = GL_NONE;
@@ -94,25 +73,15 @@ private:
     GLuint m_DstFboTextureId = GL_NONE;
     GLuint m_DstFboId = GL_NONE;
     NativeImage m_RenderImage;
-    glm::mat4 m_MVPMatrix;
-    TransformMatrix m_transformMatrix;
-
-    int m_FrameIndex;
-    vec2 m_TouchXY;
     vec2 m_ScreenSize;
-
     OnRenderFrameCallback m_RenderFrameCallback = nullptr;
     void *m_CallbackContext = nullptr;
-
     //支持滑动选择滤镜功能
-    volatile bool m_IsShaderChanged = false;
-    volatile bool m_ExtImageChanged = false;
     char * m_pFragShaderBuffer = nullptr;
     NativeImage m_ExtImage;
     GLuint m_ExtTextureId = GL_NONE;
     int m_ShaderIndex = 0;
     mutex m_ShaderMutex;
-
 };
 
 
