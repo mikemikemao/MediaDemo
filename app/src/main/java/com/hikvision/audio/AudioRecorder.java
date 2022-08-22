@@ -27,7 +27,7 @@ public class AudioRecorder extends Thread {
 			return;
 		}
 
-		mAudioRecord = new AudioRecord(android.media.MediaRecorder.AudioSource.VOICE_COMMUNICATION, DEFAULT_SAMPLE_RATE, DEFAULT_CHANNEL_LAYOUT, DEFAULT_SAMPLE_FORMAT, mMinBufferSize);
+		mAudioRecord = new AudioRecord(android.media.MediaRecorder.AudioSource.DEFAULT, DEFAULT_SAMPLE_RATE, DEFAULT_CHANNEL_LAYOUT, DEFAULT_SAMPLE_FORMAT, mMinBufferSize);
 		try {
 			mAudioRecord.startRecording();
 		} catch (IllegalStateException e) {

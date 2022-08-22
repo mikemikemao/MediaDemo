@@ -60,7 +60,7 @@ public class AudioActivity extends AppCompatActivity implements View.OnClickList
                 }
                 break;
             case R.id.tv_playPCM:
-                AudioTrackManager.getInstance().startPlay("/sdcard/pcm1.pcm");
+                AudioTrackManager.getInstance().startPlay("/sdcard/pcm0.pcm");
                 break;
             case R.id.tv_camcelPlayPCM:
                 AudioTrackManager.getInstance().stopPlay();
@@ -72,21 +72,35 @@ public class AudioActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onAudioData(byte[] data, int dataSize) {
-        Log.d(TAG, "onAudioData: dataSize=" + dataSize);
-        byte[] rightData = new byte[dataSize/4];
-        byte[] mic1Data = new byte[dataSize/4];
-        byte[] mic2Data = new byte[dataSize/4];
-        byte[] mic3Data = new byte[dataSize/4];
-        stereo2mono(data, dataSize, rightData, mic1Data, mic2Data,mic3Data);
-        FileUtils.saveData("/sdcard/pcm0.pcm",rightData,true);
-        FileUtils.saveData("/sdcard/pcm1.pcm",mic1Data,true);
-        FileUtils.saveData("/sdcard/pcm2.pcm",mic2Data,true);
-        FileUtils.saveData("/sdcard/pcm3.pcm",mic3Data,true);
+        Log.d(TAG, "onAudioData: dataSize=" + dataSize + data[0] +"  " + data[1] +"  " + data[2] +"  " + data[3]);
+        FileUtils.saveData("/sdcard/pcm0.pcm",data,true);
+        //改成左右声道
+        byte[] rightData = new byte[dataSize/2];
+        byte[] leftData = new byte[dataSize/2];
+        stereo2mono(data, leftData, rightData);
+        FileUtils.saveData("/sdcard/pcmLeft.pcm",leftData,true);
+        FileUtils.saveData("/sdcard/pcmRight.pcm",rightData,true);
     }
 
     @Override
     public void onError(String msg) {
 
+    }
+
+    public int stereo2mono(byte[] stereoData,byte[] leftData, byte[] rightData){
+        if (stereoData == null || leftData == null || rightData == null){
+            return -1;
+        }
+        int left = 0;
+        int right = 0;
+        for(int len = 0; len < stereoData.length; len += 4)
+        {
+            rightData[right++] = stereoData[len];
+            rightData[right++] = stereoData[len + 1];
+            leftData[left++] = stereoData[len + 2];
+            leftData[left++] = stereoData[len + 3];
+        }
+        return 0;
     }
 
 
