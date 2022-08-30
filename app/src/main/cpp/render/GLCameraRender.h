@@ -70,8 +70,6 @@ private:
     GLuint m_VboIds[4];
     GLuint m_SrcFboTextureId = GL_NONE;
     GLuint m_SrcFboId = GL_NONE;
-    GLuint m_DstFboTextureId = GL_NONE;
-    GLuint m_DstFboId = GL_NONE;
     NativeImage m_RenderImage;
     vec2 m_ScreenSize;
     OnRenderFrameCallback m_RenderFrameCallback = nullptr;

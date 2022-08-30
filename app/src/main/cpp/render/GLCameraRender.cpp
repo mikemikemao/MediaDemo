@@ -333,16 +333,6 @@ bool GLCameraRender::CreateFrameBufferObj() {
         glBindTexture(GL_TEXTURE_2D, GL_NONE);
     }
 
-    if(m_DstFboTextureId == GL_NONE) {
-        glGenTextures(1, &m_DstFboTextureId);
-        glBindTexture(GL_TEXTURE_2D, m_DstFboTextureId);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glBindTexture(GL_TEXTURE_2D, GL_NONE);
-    }
-
     // 创建并初始化 FBO
     if(m_SrcFboId == GL_NONE) {
         glGenFramebuffers(1, &m_SrcFboId);
@@ -360,29 +350,6 @@ bool GLCameraRender::CreateFrameBufferObj() {
             if(m_SrcFboId != GL_NONE) {
                 glDeleteFramebuffers(1, &m_SrcFboId);
                 m_SrcFboId = GL_NONE;
-            }
-            glBindTexture(GL_TEXTURE_2D, GL_NONE);
-            glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
-            return false;
-        }
-    }
-
-    if(m_DstFboId == GL_NONE) {
-        glGenFramebuffers(1, &m_DstFboId);
-        glBindFramebuffer(GL_FRAMEBUFFER, m_DstFboId);
-        glBindTexture(GL_TEXTURE_2D, m_DstFboTextureId);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_DstFboTextureId, 0);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_RenderImage.height, m_RenderImage.width, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-        if (glCheckFramebufferStatus(GL_FRAMEBUFFER)!= GL_FRAMEBUFFER_COMPLETE) {
-            LOGCATE("GLCameraRender::CreateFrameBufferObj glCheckFramebufferStatus status != GL_FRAMEBUFFER_COMPLETE");
-            if(m_DstFboTextureId != GL_NONE) {
-                glDeleteTextures(1, &m_DstFboTextureId);
-                m_DstFboTextureId = GL_NONE;
-            }
-
-            if(m_DstFboId != GL_NONE) {
-                glDeleteFramebuffers(1, &m_DstFboId);
-                m_DstFboId = GL_NONE;
             }
             glBindTexture(GL_TEXTURE_2D, GL_NONE);
             glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
