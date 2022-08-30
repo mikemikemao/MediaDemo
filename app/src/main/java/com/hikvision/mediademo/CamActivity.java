@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 import com.hikvision.cam2.Camera2FrameCallback;
 import com.hikvision.cam2.Camera2Wrapper;
 import com.hikvision.opengl.MyMediaRender;
+import com.hikvision.util.FileUtils;
 
 import static com.hikvision.jni.MyCam.IMAGE_FORMAT_I420;
 import static com.hikvision.opengl.MyMediaRender.RECORDER_TYPE_SINGLE_VIDEO;
@@ -99,7 +100,7 @@ public class CamActivity extends AppCompatActivity implements Camera2FrameCallba
     @Override
     public void onPreviewFrame(byte[] data, int width, int height) {
         //Log.d(TAG, "onPreviewFrame() called with: data = [" + data + "], width = [" + width + "], height = [" + height + "]"+ "size = "+ data.length);
-        //FileUtils.saveData("/sdcard/video.yuv",data,true);
+        //FileUtils.saveData("/sdcard/video.yuv",data,false);
         myMediaRender.onPreviewFrame(IMAGE_FORMAT_I420, data, width, height);
         myMediaRender.requestRender();
     }

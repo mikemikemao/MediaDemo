@@ -66,8 +66,8 @@ private:
     GLuint m_ProgramObj = GL_NONE;
     GLuint m_FboProgramObj = GL_NONE;
     GLuint m_TextureIds[TEXTURE_NUM];
-    GLuint m_VaoId = GL_NONE;
-    GLuint m_VboIds[3];
+    GLuint m_VaoId[2];
+    GLuint m_VboIds[4];
     GLuint m_SrcFboTextureId = GL_NONE;
     GLuint m_SrcFboId = GL_NONE;
     GLuint m_DstFboTextureId = GL_NONE;

@@ -87,13 +87,13 @@ static GLfloat verticesCoords[] = {
         1.0f,  -1.0f, 0.0f,  // Position 2
         1.0f,   1.0f, 0.0f,  // Position 3
 };
-
-//static GLfloat textureCoords[] = {
-//        0.0f,  1.0f,        // TexCoord 0
-//        0.0f,  0.0f,        // TexCoord 1
-//        1.0f,  0.0f,        // TexCoord 2
-//        1.0f,  1.0f         // TexCoord 3
-//};
+//FBO文件 默认为左下角坐标系
+static GLfloat fboTextureCoords[] = {
+        0.0f,  1.0f,        // TexCoord 0
+        0.0f,  0.0f,        // TexCoord 1
+        1.0f,  0.0f,        // TexCoord 2
+        1.0f,  1.0f         // TexCoord 3
+};
 static GLfloat textureCoords[] = {
         0.0f,  0.0f,        // TexCoord 0
         0.0f,  1.0f,        // TexCoord 1
@@ -188,19 +188,22 @@ void GLCameraRender::OnSurfaceCreated() {
     }
 
     // Generate VBO Ids and load the VBOs with data
-    glGenBuffers(3, m_VboIds);
+    glGenBuffers(4, m_VboIds);
     glBindBuffer(GL_ARRAY_BUFFER, m_VboIds[0]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(verticesCoords), verticesCoords, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, m_VboIds[1]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(textureCoords), textureCoords, GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_VboIds[2]);
+    glBindBuffer(GL_ARRAY_BUFFER, m_VboIds[2]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(fboTextureCoords), fboTextureCoords, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_VboIds[3]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // Generate VAO Id
-    glGenVertexArrays(1, &m_VaoId);
-    glBindVertexArray(m_VaoId);
+    glGenVertexArrays(2, m_VaoId);
+    glBindVertexArray(m_VaoId[0]);
 
     glBindBuffer(GL_ARRAY_BUFFER, m_VboIds[0]);
     glEnableVertexAttribArray(0);
@@ -212,7 +215,24 @@ void GLCameraRender::OnSurfaceCreated() {
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (const void *)0);
     glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_VboIds[2]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_VboIds[3]);
+
+    glBindVertexArray(GL_NONE);
+
+    //绑定VAO1
+    glBindVertexArray(m_VaoId[1]);
+
+    glBindBuffer(GL_ARRAY_BUFFER, m_VboIds[0]);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (const void *)0);
+    glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
+
+    glBindBuffer(GL_ARRAY_BUFFER, m_VboIds[2]);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (const void *)0);
+    glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_VboIds[3]);
 
     glBindVertexArray(GL_NONE);
 
@@ -270,7 +290,7 @@ void GLCameraRender::OnDrawFrame() {
                  m_RenderImage.ppPlane[2]);
     glBindTexture(GL_TEXTURE_2D, GL_NONE);
 
-    glBindVertexArray(m_VaoId);
+    glBindVertexArray(m_VaoId[1]);
 
     for (int i = 0; i < TEXTURE_NUM; ++i) {
         glActiveTexture(GL_TEXTURE0 + i);
@@ -285,29 +305,16 @@ void GLCameraRender::OnDrawFrame() {
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (const void *)0);
 
-    //再绘制一次，把方向倒过来
-    glBindFramebuffer(GL_FRAMEBUFFER, m_DstFboId);
-    glViewport(0, 0, m_RenderImage.height, m_RenderImage.width); //相机的宽和高反了,
-    glClear(GL_COLOR_BUFFER_BIT);
-    glUseProgram (m_ProgramObj);
-    glBindVertexArray(m_VaoId);
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_SrcFboTextureId);
-    GLUtils::setInt(m_ProgramObj, "s_texture0", 0);
-    GLUtils::setInt(m_ProgramObj, "u_nImgType", IMAGE_FORMAT_RGBA);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (const void *)0);
-
-    GetRenderFrameFromFBO();
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindVertexArray(GL_NONE);
     lock.unlock();
 
     // 渲染到屏幕
     glViewport(0, 0, m_ScreenSize.x, m_ScreenSize.y);
     glClear(GL_COLOR_BUFFER_BIT);
-
+    glBindVertexArray(m_VaoId[0]);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_DstFboTextureId);
+    glBindTexture(GL_TEXTURE_2D, m_SrcFboTextureId);
     GLUtils::setInt(m_ProgramObj, "s_texture0", 0);
 
     GLUtils::setInt(m_ProgramObj, "u_nImgType", IMAGE_FORMAT_RGBA);
