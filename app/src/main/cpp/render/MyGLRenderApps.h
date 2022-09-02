@@ -17,30 +17,24 @@
 #include <vec2.hpp>
 #include <render/BaseGLRender.h>
 #include <vector>
+
+#include "GLRenderLooper.h"
+
 using namespace glm;
 using namespace std;
 
-#define MATH_PI 3.1415926535897932384626433832802
 #define TEXTURE_NUM 3
 
-#define SHADER_INDEX_ORIGIN  0
-#define SHADER_INDEX_DMESH   1
-#define SHADER_INDEX_GHOST   2
-#define SHADER_INDEX_CIRCLE  3
-#define SHADER_INDEX_ASCII   4
-#define SHADER_INDEX_SPLIT   5
-#define SHADER_INDEX_MATTE   6
-#define SHADER_INDEX_LUT_A   7
-#define SHADER_INDEX_LUT_B   8
-#define SHADER_INDEX_LUT_C   9
-#define SHADER_INDEX_NE      10  //Negative effect
+#define IMG_WIDTH 1600
+#define IMG_HEIGHT 1200
+
 
 typedef void (*OnRenderFrameCallback)(void*, NativeImage*);
 
-class GLCameraRender: public VideoRender, public BaseGLRender{
+class MyGLRenderApps: public VideoRender, public BaseGLRender{
 public:
     //单例模式
-    static GLCameraRender *GetInstance();
+    static MyGLRenderApps *GetInstance();
     static void ReleaseInstance();
     //添加好滤镜之后，视频帧的回调，然后将带有滤镜的视频帧放入编码队列
     void SetRenderCallback(void *ctx, OnRenderFrameCallback callback) {
@@ -54,15 +48,19 @@ public:
     virtual void OnSurfaceCreated();
     virtual void OnSurfaceChanged(int w, int h);
     virtual void OnDrawFrame();
+    //使用egl实现离屏幕渲染
+    void eglInit();
+    void OnEglDrawFrame();
+    static void OnAsyncRenderDone(void *callback, int fboTexId);
 private:
-    GLCameraRender();
-    virtual ~GLCameraRender();
+    MyGLRenderApps();
+    virtual ~MyGLRenderApps();
     bool CreateFrameBufferObj();
     void GetRenderFrameFromFBO();
 
 private:
     static std::mutex m_Mutex;
-    static GLCameraRender* s_Instance;
+    static MyGLRenderApps* s_Instance;
     GLuint m_ProgramObj = GL_NONE;
     GLuint m_FboProgramObj = GL_NONE;
     GLuint m_TextureIds[TEXTURE_NUM];
@@ -77,9 +75,12 @@ private:
     //支持滑动选择滤镜功能
     char * m_pFragShaderBuffer = nullptr;
     NativeImage m_ExtImage;
-    GLuint m_ExtTextureId = GL_NONE;
-    int m_ShaderIndex = 0;
-    mutex m_ShaderMutex;
+
+    //egl
+    GLEnv m_GLEnv;
+    EglCore *m_EglCore = nullptr;
+    OffscreenSurface *m_OffscreenSurface = nullptr;
+    condition_variable m_Cond;
 };
 
 

@@ -4,25 +4,37 @@
 
 #include "MediaRecorderContext.h"
 #include "utils/LogUtil.h"
-#include "GLCameraRender.h"
-#include "EGLRender.h"
+#include "MyGLRenderApps.h"
+#include "MyGLRenderTests.h"
+
 
 jfieldID MediaRecorderContext::s_ContextHandle = 0L;
 
-MediaRecorderContext::MediaRecorderContext() {
-    GLCameraRender::GetInstance();
+MediaRecorderContext::MediaRecorderContext(GL_RENDER_TYPE renderType)
+                    :m_renderType(renderType) {
+    if (renderType==GL_RENDER_APPS){
+        m_BaseGLRender = MyGLRenderApps::GetInstance();
+    }
+    if (renderType==GL_RENDER_TESTS){
+        m_BaseGLRender = MyGLRenderTests::GetInstance();
+    }
 }
 
 MediaRecorderContext::~MediaRecorderContext()
 {
-    GLCameraRender::ReleaseInstance();
+    if (m_renderType==GL_RENDER_APPS){
+        MyGLRenderApps::ReleaseInstance();
+    }
+    if (m_renderType==GL_RENDER_TESTS){
+        MyGLRenderTests::ReleaseInstance();
+    }
 }
 
 
-void MediaRecorderContext::CreateContext(JNIEnv *env, jobject instance)
+void MediaRecorderContext::CreateContext(JNIEnv *env, jobject instance,GL_RENDER_TYPE renderType)
 {
     LOGCATE("MediaRecorderContext::CreateContext");
-    MediaRecorderContext *pContext = new MediaRecorderContext();
+    MediaRecorderContext *pContext = new MediaRecorderContext(renderType);
     StoreContext(env, instance, pContext);
 }
 
@@ -78,13 +90,13 @@ MediaRecorderContext *MediaRecorderContext::GetContext(JNIEnv *env, jobject inst
 int MediaRecorderContext::Init()
 {
     //设置回调函数
-    GLCameraRender::GetInstance()->SetRenderCallback(this, OnGLRenderFrame);
+    MyGLRenderApps::GetInstance()->SetRenderCallback(this, OnGLRenderFrame);
     return 0;
 }
 
 int MediaRecorderContext::UnInit()
 {
-    GLCameraRender::GetInstance()->UnInit();
+    MyGLRenderApps::GetInstance()->UnInit();
     return 0;
 }
 
@@ -126,24 +138,27 @@ void MediaRecorderContext::OnPreviewFrame(int format, uint8_t *pBuffer, int widt
 //	lock.unlock();
 
     //NativeImageUtil::DumpNativeImage(&nativeImage, "/sdcard", "camera");
-    GLCameraRender::GetInstance()->RenderVideoFrame(&nativeImage);
+    MyGLRenderApps::GetInstance()->RenderVideoFrame(&nativeImage);
 }
 
 
 
 void MediaRecorderContext::OnSurfaceCreated()
 {
-    GLCameraRender::GetInstance()->OnSurfaceCreated();
+    MyGLRenderApps::GetInstance()->eglInit();
+    //glClearColor(1.0f,1.0f,1.0f, 1.0f);
 }
 
 void MediaRecorderContext::OnSurfaceChanged(int width, int height)
 {
-    GLCameraRender::GetInstance()->OnSurfaceChanged(width, height);
+    MyGLRenderApps::GetInstance()->OnSurfaceChanged(width, height);
 }
 
 void MediaRecorderContext::OnDrawFrame()
 {
-    GLCameraRender::GetInstance()->OnDrawFrame();
+    MyGLRenderApps::GetInstance()->OnDrawFrame();
+    //MyGLRenderApps::GetInstance()->eglInit();
+    //MyGLRenderApps::GetInstance()->OnEglDrawFrame();
 }
 
 //回调 将YUV数据转成RGBA传回
@@ -157,17 +172,19 @@ void MediaRecorderContext::OnGLRenderFrame(void *ctx, NativeImage *pImage) {
 
 int MediaRecorderContext::StartRecord(int recorderType, const char *outUrl,
                                       int frameWidth, int frameHeight, long videoBitRate,int fps) {
-    std::unique_lock<std::mutex> lock(m_mutex);
-    switch (recorderType) {
-        case RECORDER_TYPE_SINGLE_VIDEO:
-            if(m_pVideoRecorder == nullptr) {
-                m_pVideoRecorder = new SingleVideoRecorder(outUrl, frameHeight, frameWidth, videoBitRate, fps);
-                m_pVideoRecorder->StartRecord();
-            }
-            break;
+//    std::unique_lock<std::mutex> lock(m_mutex);
+//    switch (recorderType) {
+//        case RECORDER_TYPE_SINGLE_VIDEO:
+//            if(m_pVideoRecorder == nullptr) {
+//                m_pVideoRecorder = new SingleVideoRecorder(outUrl, frameHeight, frameWidth, videoBitRate, fps);
+//                m_pVideoRecorder->StartRecord();
+//            }
+//            break;
+//
+//        default:
+//            break;
+//    }
 
-        default:
-            break;
-    }
+    MyGLRenderApps::GetInstance()->OnEglDrawFrame();
     return 0;
 }

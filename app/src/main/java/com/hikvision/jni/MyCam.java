@@ -19,6 +19,10 @@ public class MyCam {
     static {
         System.loadLibrary("learn-dsp");
     }
+
+    public static final int IMAGE_FORMAT_RGBA = 0x01;
+    public static final int IMAGE_FORMAT_NV21 = 0x02;
+    public static final int IMAGE_FORMAT_NV12 = 0x03;
     public static final int IMAGE_FORMAT_I420 = 0x04;
     private static String TAG = "MyCam";
 
@@ -40,10 +44,10 @@ public class MyCam {
 
     /**
      * description native_CreateContext
-     * param
+     * param  renderType  0 应用  1  测试
      * @return
      */
-    public native void native_CreateContext();
+    public native void native_CreateContext(int renderType);
 
     /**
      * description native_DestroyContext

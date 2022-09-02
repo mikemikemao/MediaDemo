@@ -16,13 +16,13 @@ public class MyMediaRender extends MyCam implements GLSurfaceView.Renderer {
     public static final int RECORDER_TYPE_SINGLE_AUDIO   = 1; //仅录制音频
     public static final int RECORDER_TYPE_AV             = 2; //同时录制音频和视频,打包成 MP4 文件
 
-    public void init(GLSurfaceView surfaceView) { //for Video
+    public void init(GLSurfaceView surfaceView,int renderType) { //for Video
         mGLSurfaceView = surfaceView;
         mGLSurfaceView.setEGLContextClientVersion(2);
         mGLSurfaceView.setRenderer(this);
         mGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
-        native_CreateContext();
+        native_CreateContext(renderType);
         native_Init();
     }
     public void unInit() {

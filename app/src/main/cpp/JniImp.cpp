@@ -49,9 +49,9 @@ Cam2Wrapper cam2Wrapper;
 * Method:    native_CreateContext
 * Signature: ()V
 */
-JNIEXPORT void JNICALL native_CreateContext(JNIEnv *env, jobject instance)
+JNIEXPORT void JNICALL native_CreateContext(JNIEnv *env, jobject instance,jint renderType)
 {
-    MediaRecorderContext::CreateContext(env, instance);
+    MediaRecorderContext::CreateContext(env, instance,(GL_RENDER_TYPE)renderType);
 }
 
 
@@ -183,7 +183,7 @@ JNIEXPORT void JNICALL native_SetSurface(JNIEnv *env,jobject instance,jclass sur
 static JNINativeMethod g_RenderMethods[] = {
 		{"native_startPreview",                      "(Landroid/view/Surface;)V",       (void *)(startPreview)},
 		{"native_stopPreview",                       "()V",                             (void *)(stopPreview)},
-		{"native_CreateContext",                     "()V",                             (void *)(native_CreateContext)},
+		{"native_CreateContext",                     "(I)V",                             (void *)(native_CreateContext)},
 		{"native_DestroyContext",                    "()V",                             (void *)(native_DestroyContext)},
 		{"native_Init",                              "()I",                             (void *)(native_Init)},
 		{"native_UnInit",                            "()I",                             (void *)(native_UnInit)},

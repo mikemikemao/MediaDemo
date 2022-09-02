@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private List<SelectItem> selectItemList = new ArrayList<>();
     private static final int CAM_OPEATION = 0;
     private static final int Audio_OPEATION = 1;
-    private static final int DE_MEDIACODEC = 2;
+    private static final int Opengl_TEST = 2;
     private static final int Audio_EXAMPLE = 3;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
                     case Audio_OPEATION:
                         startActivity(new Intent(MainActivity.this, AudioActivity.class));
                         break;
+                    case Opengl_TEST:
+                        startActivity(new Intent(MainActivity.this, OpenglActivity.class));
+                        break;
                     default:
                         break;
                 }
@@ -61,5 +64,7 @@ public class MainActivity extends AppCompatActivity {
         selectItemList.add(cam);
         SelectItem speaker = new SelectItem("speaker", R.drawable.ic_aspect);
         selectItemList.add(speaker);
+        SelectItem openglTest = new SelectItem("opengl test", R.drawable.ic_aspect);
+        selectItemList.add(openglTest);
     }
 }

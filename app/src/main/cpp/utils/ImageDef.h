@@ -35,6 +35,16 @@ typedef struct _tag_NativeRectF
 	}
 } RectF;
 
+
+struct SizeF {
+	float width;
+	float height;
+	SizeF() {
+		width = height = 0;
+	}
+};
+
+
 typedef struct _tag_NativeImage
 {
 	int width;
