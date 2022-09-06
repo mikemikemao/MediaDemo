@@ -1,5 +1,6 @@
 package com.hikvision.mediademo;
 
+import android.content.res.AssetManager;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -24,6 +25,7 @@ import com.hikvision.util.FileUtils;
  */
 public class AudioActivity extends AppCompatActivity implements View.OnClickListener, AudioRecorder.AudioRecorderCallback {
     private static final String TAG = "AudioActivity";
+    private static final String PCM_PATH = "/sdcard/audFile/standard16k.pcm";
 
     private AudioRecorder mAudioRecorder;
     @Override
@@ -40,6 +42,8 @@ public class AudioActivity extends AppCompatActivity implements View.OnClickList
         findViewById(R.id.tv_cancelRecordPCM).setOnClickListener(this);
         findViewById(R.id.tv_playPCM).setOnClickListener(this);
         findViewById(R.id.tv_camcelPlayPCM).setOnClickListener(this);
+        //获取asset路径 并读取
+        FileUtils.copyAssetsDirToSDCard(this, "audFile", "/sdcard");
     }
     @Override
     public void onClick(View v) {
@@ -60,7 +64,7 @@ public class AudioActivity extends AppCompatActivity implements View.OnClickList
                 }
                 break;
             case R.id.tv_playPCM:
-                AudioTrackManager.getInstance().startPlay("/sdcard/pcm0.pcm");
+                AudioTrackManager.getInstance().startPlay(PCM_PATH);
                 break;
             case R.id.tv_camcelPlayPCM:
                 AudioTrackManager.getInstance().stopPlay();
