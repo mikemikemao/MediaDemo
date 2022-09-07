@@ -108,6 +108,7 @@ JNIEXPORT void JNICALL native_OnPreviewFrame(JNIEnv *env,
 	MediaRecorderContext *pContext = MediaRecorderContext::GetContext(env, instance);
 	if(pContext) pContext->OnPreviewFrame(format, buf, width, height);
 	delete[] buf;
+	env->DeleteLocalRef(data);
 }
 
 
@@ -174,6 +175,16 @@ JNIEXPORT void JNICALL native_SetSurface(JNIEnv *env,jobject instance,jclass sur
 	//if(pContext)  pContext->SetSurface(env,surfaceObj);
 }
 
+/*
+ * Class:     com_byteflow_app_MyNativeRender
+ * Method:    native_SetParamsInt
+ * Signature: (III)V
+ */
+JNIEXPORT void JNICALL native_SetParamsInt(JNIEnv *env, jobject instance, jint paramType, jint value0, jint value1)
+{
+	MediaRecorderContext *pContext = MediaRecorderContext::GetContext(env, instance);
+	if(pContext) return pContext->SetParamsInt(paramType, value0, value1);
+}
 
 #ifdef __cplusplus
 }
@@ -183,7 +194,7 @@ JNIEXPORT void JNICALL native_SetSurface(JNIEnv *env,jobject instance,jclass sur
 static JNINativeMethod g_RenderMethods[] = {
 		{"native_startPreview",                      "(Landroid/view/Surface;)V",       (void *)(startPreview)},
 		{"native_stopPreview",                       "()V",                             (void *)(stopPreview)},
-		{"native_CreateContext",                     "(I)V",                             (void *)(native_CreateContext)},
+		{"native_CreateContext",                     "(I)V",                            (void *)(native_CreateContext)},
 		{"native_DestroyContext",                    "()V",                             (void *)(native_DestroyContext)},
 		{"native_Init",                              "()I",                             (void *)(native_Init)},
 		{"native_UnInit",                            "()I",                             (void *)(native_UnInit)},
@@ -193,6 +204,7 @@ static JNINativeMethod g_RenderMethods[] = {
 		{"native_OnDrawFrame",                       "()V",                             (void *)(native_OnDrawFrame)},
 		{"native_StartRecord",                       "(ILjava/lang/String;IIJI)I",      (void *)(native_StartRecord)},
 		{"native_SetSurface",                        "(Landroid/view/Surface;)V",       (void *)(native_SetSurface)},
+		{"native_SetParamsInt",                      "(III)V",                          (void *)(native_SetParamsInt)},
 
 };
 

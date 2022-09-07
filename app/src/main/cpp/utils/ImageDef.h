@@ -18,6 +18,15 @@
 #define IMAGE_FORMAT_NV12           0x03
 #define IMAGE_FORMAT_I420           0x04
 
+#define IMAGE_FORMAT_RGBA           0x01
+#define IMAGE_FORMAT_NV21           0x02
+#define IMAGE_FORMAT_NV12           0x03
+#define IMAGE_FORMAT_I420           0x04
+#define IMAGE_FORMAT_YUYV           0x05
+#define IMAGE_FORMAT_GRAY           0x06
+#define IMAGE_FORMAT_I444           0x07
+#define IMAGE_FORMAT_P010           0x08
+
 #define IMAGE_FORMAT_RGBA_EXT       "RGB32"
 #define IMAGE_FORMAT_NV21_EXT       "NV21"
 #define IMAGE_FORMAT_NV12_EXT       "NV12"
@@ -119,97 +128,147 @@ public:
 		pImage->ppPlane[2] = nullptr;
 	}
 
+//	static void CopyNativeImage(NativeImage *pSrcImg, NativeImage *pDstImg)
+//	{
+//	    LOGCATE("NativeImageUtil::CopyNativeImage src[w,h,format]=[%d, %d, %d], dst[w,h,format]=[%d, %d, %d]", pSrcImg->width, pSrcImg->height, pSrcImg->format, pDstImg->width, pDstImg->height, pDstImg->format);
+//        LOGCATE("NativeImageUtil::CopyNativeImage src[line0,line1,line2]=[%d, %d, %d], dst[line0,line1,line2]=[%d, %d, %d]", pSrcImg->pLineSize[0], pSrcImg->pLineSize[1], pSrcImg->pLineSize[2], pDstImg->pLineSize[0], pDstImg->pLineSize[1], pDstImg->pLineSize[2]);
+//
+//        if(pSrcImg == nullptr || pSrcImg->ppPlane[0] == nullptr) return;
+//
+//		if(pSrcImg->format != pDstImg->format ||
+//		   pSrcImg->width != pDstImg->width ||
+//		   pSrcImg->height != pDstImg->height)
+//		{
+//			LOGCATE("NativeImageUtil::CopyNativeImage invalid params.");
+//			return;
+//		}
+//
+//		if(pDstImg->ppPlane[0] == nullptr) AllocNativeImage(pDstImg);
+//
+//		switch (pSrcImg->format)
+//		{
+//			case IMAGE_FORMAT_I420:
+//			{
+//				// y plane
+//				if(pSrcImg->pLineSize[0] != pDstImg->pLineSize[0]) {
+//					for (int i = 0; i < pSrcImg->height; ++i) {
+//						memcpy(pDstImg->ppPlane[0] + i * pDstImg->pLineSize[0], pSrcImg->ppPlane[0] + i * pSrcImg->pLineSize[0], pDstImg->width);
+//					}
+//				}
+//				else
+//				{
+//					memcpy(pDstImg->ppPlane[0], pSrcImg->ppPlane[0], pDstImg->pLineSize[0] * pSrcImg->height);
+//				}
+//
+//				// u plane
+//				if(pSrcImg->pLineSize[1] != pDstImg->pLineSize[1]) {
+//					for (int i = 0; i < pSrcImg->height / 2; ++i) {
+//						memcpy(pDstImg->ppPlane[1] + i * pDstImg->pLineSize[1], pSrcImg->ppPlane[1] + i * pSrcImg->pLineSize[1], pDstImg->width / 2);
+//					}
+//				}
+//				else
+//				{
+//					memcpy(pDstImg->ppPlane[1], pSrcImg->ppPlane[1], pDstImg->pLineSize[1] * pSrcImg->height / 2);
+//				}
+//
+//				// v plane
+//				if(pSrcImg->pLineSize[2] != pDstImg->pLineSize[2]) {
+//					for (int i = 0; i < pSrcImg->height / 2; ++i) {
+//						memcpy(pDstImg->ppPlane[2] + i * pDstImg->pLineSize[2], pSrcImg->ppPlane[2] + i * pSrcImg->pLineSize[2], pDstImg->width / 2);
+//					}
+//				}
+//				else
+//				{
+//					memcpy(pDstImg->ppPlane[2], pSrcImg->ppPlane[2], pDstImg->pLineSize[2] * pSrcImg->height / 2);
+//				}
+//			}
+//			    break;
+//			case IMAGE_FORMAT_NV21:
+//			case IMAGE_FORMAT_NV12:
+//			{
+//				// y plane
+//				if(pSrcImg->pLineSize[0] != pDstImg->pLineSize[0]) {
+//					for (int i = 0; i < pSrcImg->height; ++i) {
+//						memcpy(pDstImg->ppPlane[0] + i * pDstImg->pLineSize[0], pSrcImg->ppPlane[0] + i * pSrcImg->pLineSize[0], pDstImg->width);
+//					}
+//				}
+//				else
+//				{
+//					memcpy(pDstImg->ppPlane[0], pSrcImg->ppPlane[0], pDstImg->pLineSize[0] * pSrcImg->height);
+//				}
+//
+//				// uv plane
+//				if(pSrcImg->pLineSize[1] != pDstImg->pLineSize[1]) {
+//					for (int i = 0; i < pSrcImg->height / 2; ++i) {
+//						memcpy(pDstImg->ppPlane[1] + i * pDstImg->pLineSize[1], pSrcImg->ppPlane[1] + i * pSrcImg->pLineSize[1], pDstImg->width);
+//					}
+//				}
+//				else
+//				{
+//					memcpy(pDstImg->ppPlane[1], pSrcImg->ppPlane[1], pDstImg->pLineSize[1] * pSrcImg->height / 2);
+//				}
+//			}
+//				break;
+//			case IMAGE_FORMAT_RGBA:
+//			{
+//				if(pSrcImg->pLineSize[0] != pDstImg->pLineSize[0])
+//				{
+//					for (int i = 0; i < pSrcImg->height; ++i) {
+//						memcpy(pDstImg->ppPlane[0] + i * pDstImg->pLineSize[0], pSrcImg->ppPlane[0] + i * pSrcImg->pLineSize[0], pDstImg->width * 4);
+//					}
+//				} else {
+//					memcpy(pDstImg->ppPlane[0], pSrcImg->ppPlane[0], pSrcImg->pLineSize[0] * pSrcImg->height);
+//				}
+//			}
+//				break;
+//			default:
+//			{
+//				LOGCATE("NativeImageUtil::CopyNativeImage do not support the format. Format = %d", pSrcImg->format);
+//			}
+//				break;
+//		}
+//
+//	}
+
+
 	static void CopyNativeImage(NativeImage *pSrcImg, NativeImage *pDstImg)
 	{
-	    LOGCATE("NativeImageUtil::CopyNativeImage src[w,h,format]=[%d, %d, %d], dst[w,h,format]=[%d, %d, %d]", pSrcImg->width, pSrcImg->height, pSrcImg->format, pDstImg->width, pDstImg->height, pDstImg->format);
-        LOGCATE("NativeImageUtil::CopyNativeImage src[line0,line1,line2]=[%d, %d, %d], dst[line0,line1,line2]=[%d, %d, %d]", pSrcImg->pLineSize[0], pSrcImg->pLineSize[1], pSrcImg->pLineSize[2], pDstImg->pLineSize[0], pDstImg->pLineSize[1], pDstImg->pLineSize[2]);
-
-        if(pSrcImg == nullptr || pSrcImg->ppPlane[0] == nullptr) return;
+		if(pSrcImg == nullptr || pSrcImg->ppPlane[0] == nullptr) return;
 
 		if(pSrcImg->format != pDstImg->format ||
 		   pSrcImg->width != pDstImg->width ||
-		   pSrcImg->height != pDstImg->height)
-		{
-			LOGCATE("NativeImageUtil::CopyNativeImage invalid params.");
-			return;
-		}
+		   pSrcImg->height != pDstImg->height) return;
 
 		if(pDstImg->ppPlane[0] == nullptr) AllocNativeImage(pDstImg);
 
 		switch (pSrcImg->format)
 		{
 			case IMAGE_FORMAT_I420:
-			{
-				// y plane
-				if(pSrcImg->pLineSize[0] != pDstImg->pLineSize[0]) {
-					for (int i = 0; i < pSrcImg->height; ++i) {
-						memcpy(pDstImg->ppPlane[0] + i * pDstImg->pLineSize[0], pSrcImg->ppPlane[0] + i * pSrcImg->pLineSize[0], pDstImg->width);
-					}
-				}
-				else
-				{
-					memcpy(pDstImg->ppPlane[0], pSrcImg->ppPlane[0], pDstImg->pLineSize[0] * pSrcImg->height);
-				}
-
-				// u plane
-				if(pSrcImg->pLineSize[1] != pDstImg->pLineSize[1]) {
-					for (int i = 0; i < pSrcImg->height / 2; ++i) {
-						memcpy(pDstImg->ppPlane[1] + i * pDstImg->pLineSize[1], pSrcImg->ppPlane[1] + i * pSrcImg->pLineSize[1], pDstImg->width / 2);
-					}
-				}
-				else
-				{
-					memcpy(pDstImg->ppPlane[1], pSrcImg->ppPlane[1], pDstImg->pLineSize[1] * pSrcImg->height / 2);
-				}
-
-				// v plane
-				if(pSrcImg->pLineSize[2] != pDstImg->pLineSize[2]) {
-					for (int i = 0; i < pSrcImg->height / 2; ++i) {
-						memcpy(pDstImg->ppPlane[2] + i * pDstImg->pLineSize[2], pSrcImg->ppPlane[2] + i * pSrcImg->pLineSize[2], pDstImg->width / 2);
-					}
-				}
-				else
-				{
-					memcpy(pDstImg->ppPlane[2], pSrcImg->ppPlane[2], pDstImg->pLineSize[2] * pSrcImg->height / 2);
-				}
-			}
-			    break;
 			case IMAGE_FORMAT_NV21:
 			case IMAGE_FORMAT_NV12:
 			{
-				// y plane
-				if(pSrcImg->pLineSize[0] != pDstImg->pLineSize[0]) {
-					for (int i = 0; i < pSrcImg->height; ++i) {
-						memcpy(pDstImg->ppPlane[0] + i * pDstImg->pLineSize[0], pSrcImg->ppPlane[0] + i * pSrcImg->pLineSize[0], pDstImg->width);
-					}
-				}
-				else
-				{
-					memcpy(pDstImg->ppPlane[0], pSrcImg->ppPlane[0], pDstImg->pLineSize[0] * pSrcImg->height);
-				}
-
-				// uv plane
-				if(pSrcImg->pLineSize[1] != pDstImg->pLineSize[1]) {
-					for (int i = 0; i < pSrcImg->height / 2; ++i) {
-						memcpy(pDstImg->ppPlane[1] + i * pDstImg->pLineSize[1], pSrcImg->ppPlane[1] + i * pSrcImg->pLineSize[1], pDstImg->width);
-					}
-				}
-				else
-				{
-					memcpy(pDstImg->ppPlane[1], pSrcImg->ppPlane[1], pDstImg->pLineSize[1] * pSrcImg->height / 2);
-				}
+				memcpy(pDstImg->ppPlane[0], pSrcImg->ppPlane[0], pSrcImg->width * pSrcImg->height * 1.5);
+			}
+				break;
+			case IMAGE_FORMAT_YUYV:
+			{
+				memcpy(pDstImg->ppPlane[0], pSrcImg->ppPlane[0], pSrcImg->width * pSrcImg->height * 2);
 			}
 				break;
 			case IMAGE_FORMAT_RGBA:
 			{
-				if(pSrcImg->pLineSize[0] != pDstImg->pLineSize[0])
-				{
-					for (int i = 0; i < pSrcImg->height; ++i) {
-						memcpy(pDstImg->ppPlane[0] + i * pDstImg->pLineSize[0], pSrcImg->ppPlane[0] + i * pSrcImg->pLineSize[0], pDstImg->width * 4);
-					}
-				} else {
-					memcpy(pDstImg->ppPlane[0], pSrcImg->ppPlane[0], pSrcImg->pLineSize[0] * pSrcImg->height);
-				}
+				memcpy(pDstImg->ppPlane[0], pSrcImg->ppPlane[0], pSrcImg->width * pSrcImg->height * 4);
+			}
+				break;
+			case IMAGE_FORMAT_GRAY:
+			{
+				memcpy(pDstImg->ppPlane[0], pSrcImg->ppPlane[0], pSrcImg->width * pSrcImg->height);
+			}
+				break;
+			case IMAGE_FORMAT_P010:
+			case IMAGE_FORMAT_I444:
+			{
+				memcpy(pDstImg->ppPlane[0], pSrcImg->ppPlane[0], pSrcImg->width * pSrcImg->height * 3);
 			}
 				break;
 			default:
@@ -220,6 +279,7 @@ public:
 		}
 
 	}
+
 
 	static void DumpNativeImage(NativeImage *pSrcImg, const char *pPath, const char *pFileName)
 	{

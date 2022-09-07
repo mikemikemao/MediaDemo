@@ -90,13 +90,13 @@ MediaRecorderContext *MediaRecorderContext::GetContext(JNIEnv *env, jobject inst
 int MediaRecorderContext::Init()
 {
     //设置回调函数
-    MyGLRenderApps::GetInstance()->SetRenderCallback(this, OnGLRenderFrame);
+    //MyGLRenderApps::GetInstance()->SetRenderCallback(this, OnGLRenderFrame);
     return 0;
 }
 
 int MediaRecorderContext::UnInit()
 {
-    MyGLRenderApps::GetInstance()->UnInit();
+    //MyGLRenderApps::GetInstance()->UnInit();
     return 0;
 }
 
@@ -137,28 +137,45 @@ void MediaRecorderContext::OnPreviewFrame(int format, uint8_t *pBuffer, int widt
 //    }
 //	lock.unlock();
 
-    //NativeImageUtil::DumpNativeImage(&nativeImage, "/sdcard", "camera");
-    MyGLRenderApps::GetInstance()->RenderVideoFrame(&nativeImage);
+    NativeImageUtil::DumpNativeImage(&nativeImage, "/sdcard", "camera1");
+    if (m_renderType==GL_RENDER_APPS){
+        MyGLRenderApps::GetInstance()->RenderVideoFrame(&nativeImage);
+    }
+    if (m_renderType==GL_RENDER_TESTS){
+        MyGLRenderTests::GetInstance()->RenderVideoFrame(&nativeImage);
+    }
 }
 
 
 
 void MediaRecorderContext::OnSurfaceCreated()
 {
-    MyGLRenderApps::GetInstance()->eglInit();
-    //glClearColor(1.0f,1.0f,1.0f, 1.0f);
+    if (m_renderType==GL_RENDER_APPS){
+        MyGLRenderApps::GetInstance()->OnSurfaceCreated();
+    }
+    if (m_renderType==GL_RENDER_TESTS){
+        MyGLRenderTests::GetInstance()->OnSurfaceCreated();
+    }
 }
 
 void MediaRecorderContext::OnSurfaceChanged(int width, int height)
 {
-    MyGLRenderApps::GetInstance()->OnSurfaceChanged(width, height);
+    if (m_renderType==GL_RENDER_APPS){
+        MyGLRenderApps::GetInstance()->OnSurfaceChanged(width, height);
+    }
+    if (m_renderType==GL_RENDER_TESTS){
+        MyGLRenderTests::GetInstance()->OnSurfaceChanged(width, height);
+    }
 }
 
 void MediaRecorderContext::OnDrawFrame()
 {
-    MyGLRenderApps::GetInstance()->OnDrawFrame();
-    //MyGLRenderApps::GetInstance()->eglInit();
-    //MyGLRenderApps::GetInstance()->OnEglDrawFrame();
+    if (m_renderType==GL_RENDER_APPS){
+        MyGLRenderApps::GetInstance()->OnDrawFrame();
+    }
+    if (m_renderType==GL_RENDER_TESTS){
+        MyGLRenderTests::GetInstance()->OnDrawFrame();
+    }
 }
 
 //回调 将YUV数据转成RGBA传回
@@ -187,4 +204,11 @@ int MediaRecorderContext::StartRecord(int recorderType, const char *outUrl,
 
     MyGLRenderApps::GetInstance()->OnEglDrawFrame();
     return 0;
+}
+
+
+void MediaRecorderContext::SetParamsInt(int paramType, int value0, int value1) {
+    if (m_renderType==GL_RENDER_TESTS){
+        MyGLRenderTests::GetInstance()->SetParamsInt(paramType,value0,value1);
+    }
 }

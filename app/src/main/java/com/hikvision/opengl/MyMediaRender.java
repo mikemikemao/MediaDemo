@@ -11,6 +11,7 @@ import javax.microedition.khronos.opengles.GL10;
 public class MyMediaRender extends MyCam implements GLSurfaceView.Renderer {
     private static final String TAG = "MyMediaRender";
     private GLSurfaceView mGLSurfaceView;
+    private int mSampleType;
 
     public static final int RECORDER_TYPE_SINGLE_VIDEO   = 0; //仅录制视频
     public static final int RECORDER_TYPE_SINGLE_AUDIO   = 1; //仅录制音频
@@ -65,6 +66,13 @@ public class MyMediaRender extends MyCam implements GLSurfaceView.Renderer {
     public void startRecord(int recorderType, String outUrl, int frameWidth, int frameHeight, long videoBitRate, int fps) {
         Log.d(TAG, "startRecord() called with: recorderType = [" + recorderType + "], outUrl = [" + outUrl + "], frameWidth = [" + frameWidth + "], frameHeight = [" + frameHeight + "], videoBitRate = [" + videoBitRate + "], fps = [" + fps + "]");
         native_StartRecord(recorderType, outUrl, frameWidth, frameHeight, videoBitRate, fps);
+    }
+
+    public void setParamsInt(int paramType, int value0, int value1) {
+        if (paramType == SAMPLE_TYPE) {
+            mSampleType = value0;
+        }
+        native_SetParamsInt(paramType, value0, value1);
     }
 
 

@@ -2,4 +2,6 @@
     <string name="app_name">MediaDemo</string>
     <string name="title_name">MediaDemo</string>
     <string name="err_permission">Permission Error</string>
+
+    <string name="select_sample">Select Sample</string>
 </resources>

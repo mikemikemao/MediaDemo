@@ -124,3 +124,17 @@ void MyGLRenderTests::SetParamsInt(int paramType, int value0, int value1) {
     }
 
 }
+
+
+void MyGLRenderTests::RenderVideoFrame(NativeImage *pImage) {
+    LOGCATE("MyGLRenderApps::RenderVideoFrame pImage=%p", pImage);
+    if(pImage == nullptr || pImage->ppPlane[0] == nullptr)
+        return;
+    if (m_pCurSample)
+    {
+        m_pCurSample->LoadImage(pImage);
+    }
+    //NativeImageUtil::DumpNativeImage(&m_RenderImage, "/sdcard", "camera");
+}
+
+

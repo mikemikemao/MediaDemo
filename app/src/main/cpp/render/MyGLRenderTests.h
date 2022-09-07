@@ -21,6 +21,7 @@ public:
     static void ReleaseInstance();
     //切换各类模式
     void SetParamsInt(int paramType, int value0, int value1);
+    void RenderVideoFrame(NativeImage *pImage);
 
 private:
     MyGLRenderTests();
@@ -32,6 +33,8 @@ private:
     GLSampleBase *m_pCurSample;
     int m_ScreenW;
     int m_ScreenH;
+    std::mutex m_Mutex;
+    NativeImage m_RenderImage;
 };
 
 

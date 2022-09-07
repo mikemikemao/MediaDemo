@@ -87,6 +87,8 @@ public:
     int StartRecord(int recorderType, const char *outUrl,
                                           int frameWidth, int frameHeight, long videoBitRate,int fps);
 
+    void SetParamsInt(int paramType, int value0, int value1) ;
+
 private:
     GL_RENDER_TYPE m_renderType;
     static jfieldID s_ContextHandle;
