@@ -16,7 +16,8 @@ SingleVideoRecorder::SingleVideoRecorder(const char *outUrl, int frameWidth, int
                          m_frameHeight(frameHeight),
                          m_bitRate(bitRate),
                          m_frameRate(fps),
-                         codec(NULL){
+                         codec(NULL),
+                         m_pANWindowRef(NULL){
     LOGCATE("SingleVideoRecorder::SingleVideoRecorder outUrl=%s, [w,h]=[%d,%d], bitRate=%ld, fps=%d", outUrl, frameWidth, frameHeight, bitRate, fps);
     strcpy(m_outUrl, outUrl);
 }
@@ -43,6 +44,12 @@ int SingleVideoRecorder::OnFrame2Encode(NativeImage *inputFrame) {
 //    m_frameQueue.Push(pImage);
     return 0;
 }
+
+ANativeWindow* SingleVideoRecorder::getInputSurface()
+{
+    return m_pANWindowRef;
+}
+
 
 int SingleVideoRecorder::StartRecord() {
     int ret = 0;
@@ -74,6 +81,11 @@ int SingleVideoRecorder::StartRecord() {
         LOGCATE("AMediaCodec_configure return  %d ", ret);
         return ret;
     }
+    ret = AMediaCodec_createInputSurface(codec, &m_pANWindowRef);
+    if (ret!=AMEDIA_OK) {
+        LOGCATE("AMediaCodec_createInputSurface failed ret = %d ", ret);
+        return ret;
+    }
     ret = AMediaCodec_start(codec);
     if (ret!=0){
         LOGCATE("AMediaCodec_start return  %d ", ret);
@@ -97,15 +109,9 @@ void SingleVideoRecorder::StartH264EncoderThread(SingleVideoRecorder *recorder) 
     LOGCATE("SingleVideoRecorder::StartH264EncoderThread start");
     //停止编码且队列为空时退出循环
     int in_frame = 0;
-    while (!recorder->m_exit || !recorder->m_frameQueue.Empty())
+    recorder->m_exit = false;
+    while (!recorder->m_exit)
     {
-        if(recorder->m_frameQueue.Empty()) {
-            //队列为空，休眠等待
-            usleep(10 * 1000);
-            continue;
-        }
-        //从队列中取一帧预览帧
-        NativeImage *pImage = recorder->m_frameQueue.Pop();
         //目前支持YUV420P的编解码
         //如果超时时间设置为0， 就相当于轮训访问的方式，非常占用CPU，所以这里设置为-1，无限超时
         AMediaCodecBufferInfo info;
@@ -157,8 +163,6 @@ void SingleVideoRecorder::StartH264EncoderThread(SingleVideoRecorder *recorder) 
             LOGCATD("SingleVideoRecorder::outputBuf size : %d, PTS : %lld", info.size, pts);
             AMediaCodec_releaseOutputBuffer(recorder->codec, bufidx, false);//不显示预览
         }
-        NativeImageUtil::FreeNativeImage(pImage);
-        delete pImage;
     }
 
     LOGCATE("SingleVideoRecorder::StartH264EncoderThread end");

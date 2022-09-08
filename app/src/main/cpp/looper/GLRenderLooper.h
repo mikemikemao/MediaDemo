@@ -17,6 +17,8 @@
 #include <EglCore.h>
 #include <OffscreenSurface.h>
 #include <ImageDef.h>
+#include <codec/SingleVideoRecorder.h>
+#include <egl/WindowSurface.h>
 
 using namespace std;
 
@@ -64,6 +66,8 @@ private:
     GLEnv *m_GLEnv;
     EglCore *m_EglCore = nullptr;
     OffscreenSurface *m_OffscreenSurface = nullptr;
+    WindowSurface * m_WindowSurface = nullptr;
+    SingleVideoRecorder *m_pVideoRecorder = nullptr;
     GLuint m_VaoId;
     GLuint m_FboTextureId;
     GLuint m_FboId;

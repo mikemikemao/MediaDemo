@@ -33,8 +33,10 @@ import static android.opengl.GLSurfaceView.RENDERMODE_WHEN_DIRTY;
 import static com.hikvision.jni.MyCam.IMAGE_FORMAT_RGBA;
 import static com.hikvision.jni.MyCam.SAMPLE_TYPE;
 import static com.hikvision.jni.MyCam.SAMPLE_TYPE_KEY_BEATING_HEART;
+import static com.hikvision.jni.MyCam.SAMPLE_TYPE_KEY_MULTI_THREAD_RENDER;
 import static com.hikvision.jni.MyCam.SAMPLE_TYPE_TEXTURE_MAP;
 import static com.hikvision.jni.MyCam.SAMPLE_TYPE_TRIANGLE;
+import static com.hikvision.opengl.MyMediaRender.RECORDER_TYPE_SINGLE_VIDEO;
 
 /**
  * description ： TODO:类的作用
@@ -53,6 +55,49 @@ public class OpenglActivity extends AppCompatActivity {
     private static final String[] SAMPLE_TITLES = {
             "DrawTriangle",
             "TextureMap",
+            "YUV Rendering",
+            "VAO&VBO",
+            "FBO Offscreen Rendering",
+            "EGL Background Rendering",
+            "FBO Stretching",
+            "Coordinate System",
+            "Basic Lighting",
+            "Transform Feedback",
+            "Complex Lighting",
+            "Depth Testing",
+            "Instancing",
+            "Stencil Testing",
+            "Blending",
+            "Particles",
+            "SkyBox",
+            "Assimp Load 3D Model",
+            "PBO",
+            "Beating Heart",
+            "Cloud",
+            "Time Tunnel",
+            "Bezier Curve",
+            "Big Eyes",
+            "Face Slender",
+            "Big Head",
+            "Rotary Head",
+            "Visualize Audio",
+            "Scratch Card",
+            "3D Avatar",
+            "Shock Wave",
+            "MRT",
+            "FBO Blit",
+            "Texture Buffer",
+            "Uniform Buffer",
+            "RGB to YUYV",
+            "Multi-Thread Render",
+            "Text Render",
+            "Portrait stay color",
+            "GL Transitions_1",
+            "GL Transitions_2",
+            "GL Transitions_3",
+            "GL Transitions_4",
+            "RGB to NV21",
+            "RGB to I420",
     };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,6 +176,15 @@ public class OpenglActivity extends AppCompatActivity {
                     case SAMPLE_TYPE_TEXTURE_MAP:
                         Log.d(TAG, "onClick: glTxtMap");
                         loadRGBAImage(R.drawable.dzzz);
+                    case SAMPLE_TYPE_KEY_MULTI_THREAD_RENDER:
+                        Log.d(TAG, "MultiThreadRender");
+                        loadRGBAImage(R.drawable.lye);
+                        mGLSurfaceView.setRenderMode(RENDERMODE_CONTINUOUSLY);
+//                        int frameWidth = 524;
+//                        int frameHeight = 790;
+//                        int fps = 25;
+//                        int bitRate = (int) (frameWidth * frameHeight * fps * 0.25);
+//                        myMediaRender.startRecord(RECORDER_TYPE_SINGLE_VIDEO, "/sdcard/record.mp4", frameWidth, frameHeight, bitRate, fps);
                     default:
                         break;
                 }

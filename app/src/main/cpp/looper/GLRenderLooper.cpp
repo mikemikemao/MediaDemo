@@ -74,6 +74,16 @@ void GLRenderLooper::OnSurfaceCreated() {
     SizeF imgSizeF = m_GLEnv->imgSize;
     m_OffscreenSurface = new OffscreenSurface(m_EglCore, imgSizeF.width, imgSizeF.height);
     m_OffscreenSurface->makeCurrent();
+    //为开启编码创造环境
+    //创建编码器
+    if(m_pVideoRecorder == nullptr) {
+        m_pVideoRecorder = new SingleVideoRecorder("/sdcard/record.mp4", 790, 524, 2587250, 25);
+        m_pVideoRecorder->StartRecord();
+        //获取eglsurface
+        ANativeWindow* anw = m_pVideoRecorder->getInputSurface();
+        m_WindowSurface = new WindowSurface(m_EglCore,anw);
+        m_WindowSurface->makeCurrent();
+    }
 
     glGenVertexArrays(1, &m_VaoId);
     glBindVertexArray(m_VaoId);
@@ -119,6 +129,7 @@ void GLRenderLooper::OnDrawFrame() {
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
     m_OffscreenSurface->swapBuffers();
+    m_WindowSurface->swapBuffers();
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     m_GLEnv->renderDone(m_GLEnv->callbackCtx, m_FboTextureId);

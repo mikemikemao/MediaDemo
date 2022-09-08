@@ -35,6 +35,7 @@ public:
     ~SingleVideoRecorder();
     int StartRecord();
     int OnFrame2Encode(NativeImage *inputFrame);
+    ANativeWindow* getInputSurface();
 private:
     static void StartH264EncoderThread(SingleVideoRecorder *context);
 private:
@@ -49,6 +50,7 @@ private:
     thread *m_encodeThread = nullptr;
     ThreadSafeQueue<NativeImage *> m_frameQueue;
     volatile int m_exit = 0;
+    ANativeWindow*  m_pANWindowRef;       /* mediacodec input buffer producer */
 };
 
 
