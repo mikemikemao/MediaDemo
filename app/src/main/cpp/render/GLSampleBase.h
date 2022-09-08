@@ -107,6 +107,11 @@ public:
 
 	virtual void Destroy() = 0;
 
+	virtual void OnStartRecord(int recorderType, const char *outUrl,
+											int frameWidth, int frameHeight, long videoBitRate,int fps){
+
+	}
+
 protected:
 	GLuint m_VertexShader;
 	GLuint m_FragmentShader;

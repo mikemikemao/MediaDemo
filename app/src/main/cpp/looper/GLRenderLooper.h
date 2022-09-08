@@ -27,6 +27,7 @@ enum {
     MSG_SurfaceChanged,
     MSG_DrawFrame,
     MSG_SurfaceDestroyed,
+    MSG_StartRecord,
 };
 
 typedef void (*RenderDoneCallback)(void*, int);
@@ -38,6 +39,10 @@ struct GLEnv {
     EGLContext sharedCtx;
     SizeF imgSize;
     RenderDoneCallback renderDone;
+    //是否编码参数
+    int fps;
+    long bitrate;
+    const char* outUrl;//编码文件保存路径
     void* callbackCtx;
 };
 
@@ -56,7 +61,7 @@ private:
     void OnSurfaceChanged(int w, int h);
     void OnDrawFrame();
     void OnSurfaceDestroyed();
-
+    void OnStartRecord();
     bool CreateFrameBufferObj();
 
 private:

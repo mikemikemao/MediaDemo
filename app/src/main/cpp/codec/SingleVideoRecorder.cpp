@@ -107,12 +107,10 @@ int64_t getNowUs()
 
 void SingleVideoRecorder::StartH264EncoderThread(SingleVideoRecorder *recorder) {
     LOGCATE("SingleVideoRecorder::StartH264EncoderThread start");
-    //停止编码且队列为空时退出循环
     int in_frame = 0;
     recorder->m_exit = false;
     while (!recorder->m_exit)
     {
-        //目前支持YUV420P的编解码
         //如果超时时间设置为0， 就相当于轮训访问的方式，非常占用CPU，所以这里设置为-1，无限超时
         AMediaCodecBufferInfo info;
         ssize_t bufidx = AMediaCodec_dequeueOutputBuffer(recorder->codec,&info,m_Timeout);

@@ -180,11 +180,16 @@ public class OpenglActivity extends AppCompatActivity {
                         Log.d(TAG, "MultiThreadRender");
                         loadRGBAImage(R.drawable.lye);
                         mGLSurfaceView.setRenderMode(RENDERMODE_CONTINUOUSLY);
-//                        int frameWidth = 524;
-//                        int frameHeight = 790;
-//                        int fps = 25;
-//                        int bitRate = (int) (frameWidth * frameHeight * fps * 0.25);
-//                        myMediaRender.startRecord(RECORDER_TYPE_SINGLE_VIDEO, "/sdcard/record.mp4", frameWidth, frameHeight, bitRate, fps);
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        int frameWidth = 524;
+                        int frameHeight = 790;
+                        int fps = 25;
+                        int bitRate = (int) (frameWidth * frameHeight * fps * 0.25);
+                        myMediaRender.startRecord(RECORDER_TYPE_SINGLE_VIDEO, "/sdcard/record.mp4", frameWidth, frameHeight, bitRate, fps);
                     default:
                         break;
                 }

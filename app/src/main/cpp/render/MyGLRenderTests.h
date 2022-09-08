@@ -22,7 +22,8 @@ public:
     //切换各类模式
     void SetParamsInt(int paramType, int value0, int value1);
     void RenderVideoFrame(NativeImage *pImage);
-
+    void OnStartRecord(int recorderType, const char *outUrl,
+                                      int frameWidth, int frameHeight, long videoBitRate,int fps);
 private:
     MyGLRenderTests();
     ~MyGLRenderTests();

@@ -138,3 +138,11 @@ void MyGLRenderTests::RenderVideoFrame(NativeImage *pImage) {
 }
 
 
+void MyGLRenderTests::OnStartRecord(int recorderType, const char *outUrl,
+                                  int frameWidth, int frameHeight, long videoBitRate,int fps) {
+    if (m_pCurSample)
+    {
+        LOGCATD("MyGLRenderTests::url = %s",outUrl);
+        m_pCurSample->OnStartRecord(recorderType,outUrl,frameWidth,frameHeight,videoBitRate,fps);
+    }
+}

@@ -40,6 +40,11 @@ void GLRenderLooper::handleMessage(LooperMessage *msg) {
             LOGCATE("GLRenderLooper::handleMessage MSG_SurfaceDestroyed");
             OnSurfaceDestroyed();
             break;
+        case MSG_StartRecord:
+            LOGCATE("GLRenderLooper::handleMessage MSG_StartRecord");
+            m_GLEnv = (GLEnv *)msg->obj;
+            OnStartRecord();
+            break;
         default:
             break;
     }
@@ -75,15 +80,6 @@ void GLRenderLooper::OnSurfaceCreated() {
     m_OffscreenSurface = new OffscreenSurface(m_EglCore, imgSizeF.width, imgSizeF.height);
     m_OffscreenSurface->makeCurrent();
     //为开启编码创造环境
-    //创建编码器
-    if(m_pVideoRecorder == nullptr) {
-        m_pVideoRecorder = new SingleVideoRecorder("/sdcard/record.mp4", 790, 524, 2587250, 25);
-        m_pVideoRecorder->StartRecord();
-        //获取eglsurface
-        ANativeWindow* anw = m_pVideoRecorder->getInputSurface();
-        m_WindowSurface = new WindowSurface(m_EglCore,anw);
-        m_WindowSurface->makeCurrent();
-    }
 
     glGenVertexArrays(1, &m_VaoId);
     glBindVertexArray(m_VaoId);
@@ -129,11 +125,37 @@ void GLRenderLooper::OnDrawFrame() {
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
     m_OffscreenSurface->swapBuffers();
-    m_WindowSurface->swapBuffers();
+    //用于编码
+    if (m_WindowSurface!=nullptr){
+        m_WindowSurface->swapBuffers();
+    }
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     m_GLEnv->renderDone(m_GLEnv->callbackCtx, m_FboTextureId);
     m_FrameIndex++;
+}
+
+
+void GLRenderLooper::OnStartRecord(){
+    //创建编码器
+    if(m_pVideoRecorder == nullptr) {
+        SizeF imgSizeF = m_GLEnv->imgSize;
+        if (strlen(m_GLEnv->outUrl)==0){
+            LOGCATE("GLRenderLooper::outUrl should not to be NULL");
+            return;
+        }
+        m_pVideoRecorder = new SingleVideoRecorder(m_GLEnv->outUrl, imgSizeF.width, imgSizeF.height, m_GLEnv->bitrate, m_GLEnv->fps);
+        m_pVideoRecorder->StartRecord();
+        //获取eglsurface
+        ANativeWindow* anw = m_pVideoRecorder->getInputSurface();
+        if (anw == NULL){
+            LOGCATE("GLRenderLooper::anw is NULL");
+            return;
+        }
+        m_WindowSurface = new WindowSurface(m_EglCore,anw);
+        m_WindowSurface->makeCurrent();
+    }
 }
 
 void GLRenderLooper::OnSurfaceDestroyed() {
@@ -159,6 +181,12 @@ void GLRenderLooper::OnSurfaceDestroyed() {
         m_OffscreenSurface->release();
         delete m_OffscreenSurface;
         m_OffscreenSurface = nullptr;
+    }
+
+    if (m_WindowSurface){
+        m_WindowSurface->release();
+        delete m_WindowSurface;
+        m_WindowSurface = nullptr;
     }
 
     if (m_EglCore) {

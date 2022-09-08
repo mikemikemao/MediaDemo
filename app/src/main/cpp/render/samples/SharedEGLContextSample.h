@@ -32,6 +32,8 @@ public:
 
 	static void OnAsyncRenderDone(void* callback, int fboTexId);
 
+	virtual void OnStartRecord(int recorderType, const char *outUrl,
+											   int frameWidth, int frameHeight, long videoBitRate,int fps) override;
 private:
 	GLuint m_ImageTextureId;
 	GLuint m_FboTextureId;

@@ -157,11 +157,15 @@ JNIEXPORT int JNICALL native_StartRecord(JNIEnv *env,
                                           jint frame_height,
                                           jlong video_bit_rate,
                                           jint fps) {
+	int ret =0;
     const char* url = env->GetStringUTFChars(out_url, nullptr);
     MediaRecorderContext *pContext = MediaRecorderContext::GetContext(env, instance);
-    env->ReleaseStringUTFChars(out_url, url);
-    if(pContext) return pContext->StartRecord(recorder_type, url, frame_width, frame_height, video_bit_rate, fps);
-    return 0;
+    if(pContext){
+    	LOGCATD("url = %s",url);
+		ret = pContext->StartRecord(recorder_type, url, frame_width, frame_height, video_bit_rate, fps);
+    }
+	env->ReleaseStringUTFChars(out_url, url);
+    return ret;
 }
 
 

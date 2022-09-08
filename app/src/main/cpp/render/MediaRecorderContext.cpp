@@ -189,20 +189,12 @@ void MediaRecorderContext::OnGLRenderFrame(void *ctx, NativeImage *pImage) {
 
 int MediaRecorderContext::StartRecord(int recorderType, const char *outUrl,
                                       int frameWidth, int frameHeight, long videoBitRate,int fps) {
-    std::unique_lock<std::mutex> lock(m_mutex);
-    switch (recorderType) {
-        case RECORDER_TYPE_SINGLE_VIDEO:
-            if(m_pVideoRecorder == nullptr) {
-                m_pVideoRecorder = new SingleVideoRecorder(outUrl, frameHeight, frameWidth, videoBitRate, fps);
-                m_pVideoRecorder->StartRecord();
-            }
-            break;
-
-        default:
-            break;
+    if (m_renderType==GL_RENDER_APPS){
+        //MyGLRenderApps::GetInstance()->OnStartRecord();
     }
-
-    MyGLRenderApps::GetInstance()->OnEglDrawFrame();
+    if (m_renderType==GL_RENDER_TESTS){
+        MyGLRenderTests::GetInstance()->OnStartRecord(recorderType,outUrl,frameWidth,frameHeight,videoBitRate,fps);
+    }
     return 0;
 }
 

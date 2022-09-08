@@ -182,6 +182,8 @@ void SharedEGLContextSample::Init()
 	m_GLEnv.imgSize       = imgSize;
 	m_GLEnv.renderDone    = OnAsyncRenderDone;
 	m_GLEnv.callbackCtx   = this;
+
+
     LOGCATE("SharedEGLContextSample::Init sharedCtx=%p", m_GLEnv.sharedCtx);
 
     GLRenderLooper::GetInstance()->postMessage(MSG_SurfaceCreated, &m_GLEnv);
@@ -249,4 +251,28 @@ void SharedEGLContextSample::Destroy()
 	{
 		glDeleteVertexArrays(1, &m_VaoId);
 	}
+}
+
+void SharedEGLContextSample::OnStartRecord(int recorderType, const char *outUrl,
+														int frameWidth, int frameHeight, long videoBitRate,int fps){
+
+	SizeF imgSize;
+	imgSize.width  = frameWidth;
+	imgSize.height = frameHeight;
+
+	m_GLEnv.sharedCtx     = eglGetCurrentContext();
+	m_GLEnv.program       = m_FboProgramObj;
+	m_GLEnv.inputTexId    = m_ImageTextureId;
+	m_GLEnv.vboIds[0]     = m_VboIds[0];
+	m_GLEnv.vboIds[1]     = m_VboIds[2];
+	m_GLEnv.vboIds[2]     = m_VboIds[3];
+	m_GLEnv.imgSize       = imgSize;
+	m_GLEnv.renderDone    = OnAsyncRenderDone;
+	m_GLEnv.callbackCtx   = this;
+
+	m_GLEnv.fps     = fps;
+	m_GLEnv.bitrate = videoBitRate;
+	m_GLEnv.outUrl  = outUrl;
+	LOGCATD("SharedEGLContextSample::url = %s",outUrl);
+	GLRenderLooper::GetInstance()->postMessage(MSG_StartRecord, &m_GLEnv);
 }
