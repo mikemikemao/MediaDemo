@@ -152,13 +152,14 @@ void SingleVideoRecorder::StartH264EncoderThread(SingleVideoRecorder *recorder) 
                 LOGCATD("SingleVideoRecorder::capture Video BUFFER_FLAG_KEY_FRAME.");
             }
             else {
-                //if (isDebug) ALOGI("capture Frame AMediaCodecBufferInfo.flags %d.", info.flags);
+                LOGCATD("SingleVideoRecorder::capture Frame AMediaCodecBufferInfo.flags %d.", info.flags);
             }
             //保存数据
-            LOGCATD("SingleVideoRecorder::EncodeBuff %x %x %x %x",*outputBuf,*(outputBuf+1),*(outputBuf+2),*(outputBuf+3));
+            LOGCATD("SingleVideoRecorder::EncodeBuff %x %x %x %x %x",*outputBuf,*(outputBuf+1),*(outputBuf+2),*(outputBuf+3),*(outputBuf+4));
             int64_t pts = info.presentationTimeUs;
             //if (isDebug) ALOGD("AMediaCodec_getOutputBuffer 容器空间BufferSize : %d", BufferSize);
             LOGCATD("SingleVideoRecorder::outputBuf size : %d, PTS : %lld", info.size, pts);
+            ToolUnits::SaveDataApp(recorder->m_outUrl,outputBuf,info.size);
             AMediaCodec_releaseOutputBuffer(recorder->codec, bufidx, false);//不显示预览
         }
     }

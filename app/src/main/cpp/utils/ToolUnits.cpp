@@ -27,6 +27,21 @@ int ToolUnits::SaveData(char *szFileName, unsigned char *iBuf,
 	return 0;
 }
 
+int ToolUnits::SaveDataApp(char *szFileName, unsigned char *iBuf,
+						unsigned int iLen) {
+	FILE *fp;
+	fp = fopen(szFileName, "ab+");
+	if (!fp) {
+		return -1;
+	}
+	if (fwrite(iBuf, 1, iLen, fp) != iLen) {
+		fclose(fp);
+		return -1;
+	}
+	fclose(fp);
+	return 0;
+}
+
 int ToolUnits::GetDataSize(char *szFileName) {
 	FILE *fp;
 	fp = fopen(szFileName, ("rb"));

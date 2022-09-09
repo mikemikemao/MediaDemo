@@ -42,7 +42,7 @@ ext.versions = versions
  * APP版本号、插件版本、编译相关版本管理
  */
 def build_versions = [:]
-build_versions.min_sdk = 24
+build_versions.min_sdk = 26
 build_versions.target_sdk = 30
 build_versions.compile_sdk = 30
 build_versions.android_gradle_plugin = "4.2.1"

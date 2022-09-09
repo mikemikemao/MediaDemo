@@ -12,6 +12,7 @@
 class ToolUnits {
 public:
 	static int SaveData(char *szFileName,unsigned char *iBuf,unsigned int iLen);
+	static int SaveDataApp(char *szFileName, unsigned char *iBuf,unsigned int iLen);
 	static int GetDataSize(char *szFileName);
 	static int ReadData(char *szFileName,unsigned char *oBuf,int iLen);
 	static int GetCurrentPath(char* exeFullPath,int pathLen);
