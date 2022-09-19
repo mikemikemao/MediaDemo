@@ -8,6 +8,7 @@
 #include <render/samples/VaoSample.h>
 #include <render/samples/FBOSample.h>
 #include <render/samples/SharedEGLContextSample.h>
+#include <render/samples/MyRender.h>
 #include "MyGLRenderTests.h"
 #include "../utils/LogUtil.h"
 
@@ -15,7 +16,7 @@ MyGLRenderTests* MyGLRenderTests::m_pContext = nullptr;
 
 MyGLRenderTests::MyGLRenderTests()
 {
-    m_pCurSample = new TriangleSample();
+    m_pCurSample = new MyRender();
     m_pBeforeSample = nullptr;
 }
 
@@ -59,6 +60,27 @@ void MyGLRenderTests::OnSurfaceCreated()
 {
     LOGCATE("MyGLRenderTests::OnSurfaceCreated");
     glClearColor(1.0f,1.0f,1.0f, 1.0f);
+//    m_currentContex = eglGetCurrentContext();
+//    eglEnv = new EglCore(EGL_NO_CONTEXT,FLAG_TRY_GLES3);
+//
+//    SingleVideoRecorder * pcEnc = new SingleVideoRecorder("/sdcard/test.h264",1920, 1080, 3000000, 20);
+//    pcEnc->StartRecord();
+//
+//    ANativeWindow* anw = pcEnc->getInputSurface();
+//    windSurface = eglEnv->createWindowSurface(anw);
+//    GO_CHECK_GL_ERROR();
+//    eglEnv->makeCurrent(windSurface, windSurface);
+//    GO_CHECK_GL_ERROR();
+//    m_pCurSample->Init();
+//    while (true){
+//        if (m_pCurSample)
+//        {
+//            m_pCurSample->Draw(1920, 1080);
+//            if (eglEnv){
+//                eglEnv->swapBuffers(windSurface);
+//            }
+//        }
+//    }
 }
 
 void MyGLRenderTests::OnSurfaceChanged(int width, int height)
@@ -80,11 +102,10 @@ void MyGLRenderTests::OnDrawFrame()
         delete m_pBeforeSample;
         m_pBeforeSample = nullptr;
     }
-
     if (m_pCurSample)
     {
         m_pCurSample->Init();
-        m_pCurSample->Draw(m_ScreenW, m_ScreenH);
+        m_pCurSample->Draw(1920, 1080);
     }
 }
 
@@ -143,6 +164,35 @@ void MyGLRenderTests::OnStartRecord(int recorderType, const char *outUrl,
     if (m_pCurSample)
     {
         LOGCATD("MyGLRenderTests::url = %s",outUrl);
-        m_pCurSample->OnStartRecord(recorderType,outUrl,frameWidth,frameHeight,videoBitRate,fps);
+        //创建Mediacodec
+        eglEnv = new EglCore(m_currentContex,FLAG_TRY_GLES3);
+
+        SingleVideoRecorder * pcEnc = new SingleVideoRecorder(outUrl,frameWidth, frameHeight, videoBitRate, fps);
+        pcEnc->StartRecord();
+
+        ANativeWindow* anw = pcEnc->getInputSurface();
+        windSurface = eglEnv->createWindowSurface(anw);
+        GO_CHECK_GL_ERROR();
+        eglEnv->makeCurrent(windSurface, windSurface);
+        GO_CHECK_GL_ERROR();
+
+//        //开线程 处理编码
+//        m_swapThread = new thread(StartSwapThread, this);
     }
 }
+
+//void MyGLRenderTests::StartSwapThread(MyGLRenderTests *myGLRenderTests) {
+//    while (true){
+//        {
+//            unique_lock<mutex> lock(myGLRenderTests->m_Mutex);
+//            GLRenderLooper::GetInstance()->postMessage(MSG_DrawFrame);
+//            myGLRenderTests->m_Cond.wait(lock);
+//        }
+//        if (myGLRenderTests->m_pCurSample)
+//        {
+//            if (myGLRenderTests->eglEnv){
+//                myGLRenderTests->eglEnv->swapBuffers(myGLRenderTests->windSurface);
+//            }
+//        }
+//    }
+//}

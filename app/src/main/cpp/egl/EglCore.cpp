@@ -31,7 +31,7 @@ EglCore::EglCore(EGLContext sharedContext, int flags) {
  * @return
  */
 bool EglCore::init(EGLContext sharedContext, int flags) {
-    assert(mEGLDisplay == EGL_NO_DISPLAY);
+    //assert(mEGLDisplay == EGL_NO_DISPLAY);
     if (mEGLDisplay != EGL_NO_DISPLAY) {
         LOGCATE("EGL already set up");
         return false;
@@ -123,14 +123,10 @@ EGLConfig EglCore::getConfig(int flags, int version) {
             EGL_DEPTH_SIZE, 16,
             EGL_STENCIL_SIZE, 8,
             EGL_RENDERABLE_TYPE, renderableType,
-            EGL_NONE, 0,      // placeholder for recordable [@-3]
+            EGL_RECORDABLE_ANDROID, 1,      // placeholder for recordable [@-3]
             EGL_NONE
     };
-    int length = sizeof(attribList) / sizeof(attribList[0]);
-    if ((flags & FLAG_RECORDABLE) != 0) {
-        attribList[length - 3] = EGL_RECORDABLE_ANDROID;
-        attribList[length - 2] = 1;
-    }
+
     EGLConfig configs = NULL;
     int numConfigs;
     if (!eglChooseConfig(mEGLDisplay, attribList, &configs, 1, &numConfigs)) {

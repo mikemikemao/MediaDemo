@@ -6,6 +6,7 @@
 #define MEDIADEMO_MYGLRENDERTESTS_H
 
 #include <stdint.h>
+#include "thread"
 #include <GLES3/gl3.h>
 #include "BaseGLRender.h"
 #include "GLSampleBase.h"
@@ -27,7 +28,7 @@ public:
 private:
     MyGLRenderTests();
     ~MyGLRenderTests();
-
+    static void StartSwapThread(MyGLRenderTests *myGLRenderTests);
 private:
     static MyGLRenderTests *m_pContext;
     GLSampleBase *m_pBeforeSample;
@@ -36,6 +37,14 @@ private:
     int m_ScreenH;
     std::mutex m_Mutex;
     NativeImage m_RenderImage;
+
+    EglCore* eglEnv = nullptr;
+    EGLSurface windSurface = nullptr;
+    EGLContext m_currentContex = nullptr;
+    thread *m_swapThread = nullptr;
+
+    std::condition_variable m_Cond;
+
 };
 
 

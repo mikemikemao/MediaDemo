@@ -75,7 +75,7 @@ void GLRenderLooper::ReleaseInstance() {
 
 void GLRenderLooper::OnSurfaceCreated() {
     LOGCATE("GLRenderLooper::OnSurfaceCreated");
-    m_EglCore = new EglCore(m_GLEnv->sharedCtx, FLAG_RECORDABLE);
+    m_EglCore = new EglCore(m_GLEnv->sharedCtx, FLAG_TRY_GLES3);
     SizeF imgSizeF = m_GLEnv->imgSize;
     m_OffscreenSurface = new OffscreenSurface(m_EglCore, imgSizeF.width, imgSizeF.height);
     m_OffscreenSurface->makeCurrent();
@@ -117,18 +117,22 @@ void GLRenderLooper::OnDrawFrame() {
     glUseProgram(m_GLEnv->program);
     glBindVertexArray(m_VaoId);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_GLEnv->inputTexId);
-    GLUtils::setInt(m_GLEnv->program, "s_TextureMap", 0);
-    float offset = (sin(m_FrameIndex * MATH_PI / 80) + 1.0f) / 2.0f;
-    GLUtils::setFloat(m_GLEnv->program, "u_Offset", offset);
+    glBindTexture(GL_TEXTURE_2D, m_GLEnv->y_TextureId);
+    GLUtils::setInt(m_GLEnv->program, "y_texture", 0);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, m_GLEnv->uv_TextureId);
+    GLUtils::setInt(m_GLEnv->program, "uv_texture", 1);
+//    float offset = (sin(m_FrameIndex * MATH_PI / 80) + 1.0f) / 2.0f;
+//    GLUtils::setFloat(m_GLEnv->program, "u_Offset", offset);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (const void *)0);
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
-    m_OffscreenSurface->swapBuffers();
-    //用于编码
-    if (m_WindowSurface!=nullptr){
-        m_WindowSurface->swapBuffers();
-    }
+//    m_OffscreenSurface->swapBuffers();
+//    //用于编码
+//    if (m_WindowSurface!=nullptr){
+//        m_eglEncodeEnv->swapBuffers(m_WindowSurface);
+//    }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

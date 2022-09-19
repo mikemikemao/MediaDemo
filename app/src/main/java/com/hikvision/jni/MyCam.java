@@ -175,4 +175,7 @@ public class MyCam {
 
 
     public native void native_SetParamsInt(int paramType, int value0, int value1);
+
+
+    public native void native_EncodeTest();
 }

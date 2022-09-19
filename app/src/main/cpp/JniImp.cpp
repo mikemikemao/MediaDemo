@@ -1,6 +1,8 @@
 //
 // Created by pirate on 2022/7/5.
 //
+#include <egl/EglCore.h>
+#include <render/samples/MyRender.h>
 #include "jni.h"
 #include "utils/LogUtil.h"
 #include "Cam2Wrapper.h"
@@ -190,6 +192,50 @@ JNIEXPORT void JNICALL native_SetParamsInt(JNIEnv *env, jobject instance, jint p
 	if(pContext) return pContext->SetParamsInt(paramType, value0, value1);
 }
 
+
+#define YUV_WIDTH   1920
+#define YUV_HEIGHT  1080
+/*
+ * Class:     com_byteflow_app_MyNativeRender
+ * Method:    native_SetParamsInt
+ * Signature: (III)V
+ */
+JNIEXPORT void JNICALL native_EncodeTest(JNIEnv *env, jobject instance)
+{
+    EglCore* eglEnv = new EglCore();
+
+    eglEnv->init(EGL_NO_CONTEXT, FLAG_TRY_GLES3);
+    usleep(5000000);
+
+	SingleVideoRecorder * pcEnc = new SingleVideoRecorder("/sdcard/test.h264",YUV_WIDTH, YUV_HEIGHT, 3000000, 20);
+	pcEnc->StartRecord();
+
+	ANativeWindow* anw = pcEnc->getInputSurface();
+
+	EGLSurface windSurface = eglEnv->createWindowSurface(anw);
+    GO_CHECK_GL_ERROR();
+	eglEnv->makeCurrent(windSurface, windSurface);
+	GO_CHECK_GL_ERROR();
+
+    MyRender* render = new MyRender();
+    render->Init();
+    int frameid = 0;
+
+
+	while (true)
+	{
+		usleep(200000);
+		LOGCATD("frame id = %d", frameid++);
+		render->Draw(YUV_WIDTH, YUV_HEIGHT);
+		//eglEnv->setPresentationTime(windSurface, (EGLnsecsANDROID)systemTime(SYSTEM_TIME_MONOTONIC));
+		eglEnv->swapBuffers(windSurface);
+		//pcEnc->EncOutputProc();
+	}
+
+}
+
+
+
 #ifdef __cplusplus
 }
 #endif
@@ -209,6 +255,7 @@ static JNINativeMethod g_RenderMethods[] = {
 		{"native_StartRecord",                       "(ILjava/lang/String;IIJI)I",      (void *)(native_StartRecord)},
 		{"native_SetSurface",                        "(Landroid/view/Surface;)V",       (void *)(native_SetSurface)},
 		{"native_SetParamsInt",                      "(III)V",                          (void *)(native_SetParamsInt)},
+		{"native_EncodeTest",                        "()V",                             (void *)(native_EncodeTest)},
 
 };
 

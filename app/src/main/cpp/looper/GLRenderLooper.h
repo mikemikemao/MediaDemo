@@ -39,6 +39,9 @@ struct GLEnv {
     EGLContext sharedCtx;
     SizeF imgSize;
     RenderDoneCallback renderDone;
+
+    GLuint y_TextureId;
+    GLuint uv_TextureId;
     //是否编码参数
     int fps;
     long bitrate;
