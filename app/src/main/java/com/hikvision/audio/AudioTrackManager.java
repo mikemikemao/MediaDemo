@@ -178,7 +178,7 @@ public class AudioTrackManager {
         try {
             destroyThread();//销毁线程
             if (mAudioTrack != null) {
-                if (mAudioTrack.getState() == AudioRecord.STATE_INITIALIZED) {//初始化成功
+                if (mAudioTrack.getState() == AudioTrack.STATE_INITIALIZED) {//初始化成功
                     mAudioTrack.stop();//停止播放
                 }
                 if (mAudioTrack != null) {

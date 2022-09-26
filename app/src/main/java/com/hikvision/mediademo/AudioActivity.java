@@ -1,6 +1,8 @@
 package com.hikvision.mediademo;
 
 import android.content.res.AssetManager;
+import android.media.AudioDeviceInfo;
+import android.media.AudioManager;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -26,7 +28,7 @@ import com.hikvision.util.FileUtils;
 public class AudioActivity extends AppCompatActivity implements View.OnClickListener, AudioRecorder.AudioRecorderCallback {
     private static final String TAG = "AudioActivity";
     private static final String PCM_PATH = "/sdcard/audFile/standard16k.pcm";
-
+    //private static final String PCM_PATH = "/sdcard/audFile/fun.wav";
     private AudioRecorder mAudioRecorder;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,7 @@ public class AudioActivity extends AppCompatActivity implements View.OnClickList
         findViewById(R.id.tv_cancelRecordPCM).setOnClickListener(this);
         findViewById(R.id.tv_playPCM).setOnClickListener(this);
         findViewById(R.id.tv_camcelPlayPCM).setOnClickListener(this);
+        findViewById(R.id.tv_audCurve).setOnClickListener(this);
         //获取asset路径 并读取
         FileUtils.copyAssetsDirToSDCard(this, "audFile", "/sdcard");
     }
@@ -69,8 +72,27 @@ public class AudioActivity extends AppCompatActivity implements View.OnClickList
             case R.id.tv_camcelPlayPCM:
                 AudioTrackManager.getInstance().stopPlay();
                 break;
+            case R.id.tv_audCurve:
+                getAudVoice();
+                break;
             default:
                 break;
+        }
+    }
+
+    public void getAudVoice(){
+        AudioManager audioManager = (AudioManager) getSystemService(this.AUDIO_SERVICE);
+        int minIndex = 0;
+        int maxIndex = 0;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+            minIndex = audioManager.getStreamMinVolume (AudioManager.STREAM_MUSIC);
+            maxIndex = audioManager.getStreamMaxVolume (AudioManager.STREAM_MUSIC);
+            for(int i=minIndex+1; i<maxIndex; i++) {
+                float db = audioManager.getStreamVolumeDb(AudioManager.STREAM_MUSIC, i, AudioDeviceInfo.TYPE_BUILTIN_SPEAKER);
+                Log.d(TAG, "volume db = " + db + "  at index= " + i);
+            }
+        }else {
+            Log.d(TAG, "API28 android9以上能用 以下用dumpsys media.audio_policy代替");
         }
     }
 
