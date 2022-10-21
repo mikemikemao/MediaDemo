@@ -90,13 +90,13 @@ MediaRecorderContext *MediaRecorderContext::GetContext(JNIEnv *env, jobject inst
 int MediaRecorderContext::Init()
 {
     //设置回调函数
-    //MyGLRenderApps::GetInstance()->SetRenderCallback(this, OnGLRenderFrame);
+    MyGLRenderApps::GetInstance()->SetRenderCallback(this, OnGLRenderFrame);
     return 0;
 }
 
 int MediaRecorderContext::UnInit()
 {
-    //MyGLRenderApps::GetInstance()->UnInit();
+    MyGLRenderApps::GetInstance()->UnInit();
     return 0;
 }
 

@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.hikvision.adapter.OpenglRecyclerViewAdapter;
 import com.hikvision.opengl.MyMediaRender;
+import com.hikvision.util.FileUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -111,6 +112,8 @@ public class OpenglActivity extends AppCompatActivity {
         myMediaRender = new MyMediaRender();
         mGLSurfaceView = (GLSurfaceView)findViewById(R.id.glSurfaceViewTest);
         myMediaRender.init(mGLSurfaceView,1);
+        //将点阵字库数据移到/sdcard目录中
+        FileUtils.copyAssetsDirToSDCard(this, "characterLibrary", "/sdcard");
     }
 
     @Override

@@ -16,7 +16,7 @@ MyGLRenderTests* MyGLRenderTests::m_pContext = nullptr;
 
 MyGLRenderTests::MyGLRenderTests()
 {
-    m_pCurSample = new MyRender();
+    m_pCurSample = new TriangleSample();
     m_pBeforeSample = nullptr;
 }
 
@@ -105,7 +105,7 @@ void MyGLRenderTests::OnDrawFrame()
     if (m_pCurSample)
     {
         m_pCurSample->Init();
-        m_pCurSample->Draw(1920, 1080);
+        m_pCurSample->Draw(m_ScreenW, m_ScreenH);
     }
 }
 
